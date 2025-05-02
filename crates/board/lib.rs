@@ -9,6 +9,7 @@ pub use piece::Effect;
 pub use piece::Move;
 pub use piece::Moveset;
 pub use piece::Recognizable;
+pub use piece::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 pub use piece::{Color, Position};
 pub use piece::{Piece, PieceType};
 pub use piece::{XAxis, YAxis};

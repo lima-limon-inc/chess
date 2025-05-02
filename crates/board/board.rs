@@ -1,20 +1,9 @@
 use crate::piece::{Piece, Position, XAxis, YAxis};
+use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 
 pub struct Board {
     pieces: Vec<Box<dyn Piece>>,
     dimensions: (XAxis, YAxis),
-}
-
-pub struct BottomLeft(pub Position);
-pub struct BottomRight(pub Position);
-pub struct UpperLeft(pub Position);
-pub struct UpperRight(pub Position);
-// TODO: Make macro
-// TODO: Implement for everyone
-impl From<UpperLeft> for Position {
-    fn from(value: UpperLeft) -> Self {
-        value.0
-    }
 }
 
 impl Board {

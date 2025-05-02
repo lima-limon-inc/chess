@@ -1,6 +1,19 @@
 use crate::board::Board;
 use std::collections::HashSet;
-use std::ops::AddAssign;
+use std::ops::{AddAssign, SubAssign};
+
+pub struct BottomLeft(pub Position);
+pub struct BottomRight(pub Position);
+pub struct UpperLeft(pub Position);
+pub struct UpperRight(pub Position);
+
+// TODO: Make macro
+// TODO: Implement for everyone
+impl From<UpperLeft> for Position {
+    fn from(value: UpperLeft) -> Self {
+        value.0
+    }
+}
 
 #[derive(Clone)]
 pub enum PieceType {
@@ -45,11 +58,35 @@ impl AddAssign for YAxis {
     }
 }
 
-// impl From<u8> for YAxis {
-//     fn from(value: u8) -> Self {
-//         YAxis::new(value)
-//     }
-// }
+impl SubAssign for YAxis {
+    fn sub_assign(&mut self, other: Self) {
+        self.0 = self.0 - other.0;
+    }
+}
+
+impl AddAssign for XAxis {
+    fn add_assign(&mut self, other: Self) {
+        self.0 = self.0 + other.0;
+    }
+}
+
+impl SubAssign for XAxis {
+    fn sub_assign(&mut self, other: Self) {
+        self.0 = self.0 - other.0;
+    }
+}
+
+impl From<u8> for YAxis {
+    fn from(value: u8) -> Self {
+        YAxis::new(value)
+    }
+}
+
+impl From<u8> for XAxis {
+    fn from(value: u8) -> Self {
+        XAxis::new(value)
+    }
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
@@ -62,6 +99,8 @@ pub struct HorizontalRange(pub Vec<Position>);
 pub struct VerticalRange(pub Vec<Position>);
 /// Range that is in the form of a plus symbol +
 pub struct PlusRange(pub Vec<Position>);
+/// Range that is in the form of a multiplication symbol x
+pub struct DiagonalRange(pub Vec<Position>);
 
 impl PlusRange {
     pub fn from(horizontal: HorizontalRange, vertical: VerticalRange) -> Self {
@@ -90,6 +129,76 @@ impl Position {
             .collect();
         HorizontalRange(range)
     }
+
+    pub fn diagonal_range(
+        origin: Position,
+        bl: BottomLeft,
+        br: BottomRight,
+        ul: UpperLeft,
+        ur: UpperRight,
+    ) -> DiagonalRange {
+        // We do each diagonal line
+        //         1\   /2
+        //           \ /
+        //            o
+        //           / \
+        //         3/   \4
+        let diagonals = vec![origin];
+
+        let center_to_ul = {
+            let mut upper_left = Vec::new();
+            let mut current = origin;
+
+            while current.x != ul.0.x && current.y != ul.0.y {
+                current.x -= 1.into();
+                current.y += 1.into();
+                upper_left.push(current);
+            }
+            upper_left
+        };
+        let center_to_ur = {
+            let mut upper_right = Vec::new();
+            let mut current = origin;
+
+            while current.x != ur.0.x && current.y != ur.0.y {
+                current.x += 1.into();
+                current.y += 1.into();
+                upper_right.push(current);
+            }
+            upper_right
+        };
+        let center_to_bl = {
+            let mut bottom_left = Vec::new();
+            let mut current = origin;
+
+            while current.x != ur.0.x && current.y != ur.0.y {
+                current.x -= 1.into();
+                current.y -= 1.into();
+                bottom_left.push(current);
+            }
+            bottom_left
+        };
+        let center_to_br = {
+            let mut bottom_right = Vec::new();
+            let mut current = origin;
+
+            while current.x != ur.0.x && current.y != ur.0.y {
+                current.x += 1.into();
+                current.y -= 1.into();
+                bottom_right.push(current);
+            }
+            bottom_right
+        };
+        DiagonalRange({
+            diagonals
+                .into_iter()
+                .chain(center_to_ul)
+                .chain(center_to_ur)
+                .chain(center_to_bl)
+                .chain(center_to_br)
+                .collect()
+        })
+    }
 }
 
 pub enum Effect {
@@ -113,7 +222,7 @@ impl Move {
 }
 
 pub trait Moveset {
-    fn move_to(&self, destination: Position) {
+    fn move_to(&mut self, destination: Position) {
         todo!()
     }
 
@@ -148,11 +257,6 @@ pub trait Recognizable {
 
 pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {}
 
-// ================================= Bishop ====================================
-struct Bishop {
-    color: Color,
-    position: Position,
-}
 // ================================== King =====================================
 struct King {
     color: Color,
@@ -168,8 +272,13 @@ struct Pawn {
     color: Color,
     position: Position,
 }
-// ================================= Queen ====================================
-struct Queen {
-    color: Color,
-    position: Position,
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn diagonal_range() {
+        panic!()
+    }
 }

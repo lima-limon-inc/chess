@@ -5,14 +5,35 @@ use crate::{
 };
 use std::collections::HashSet;
 
-// ================================== Rook =====================================
-pub struct Rook {
+// ================================= Bishop ====================================
+pub struct Bishop {
     color: Color,
     position: Position,
     piece_type: PieceType,
 }
 
-impl Moveset for Rook {
+// TODO: Make this a macro
+impl CurrentPosition for Bishop {
+    fn get_current_position(&self) -> Position {
+        self.position
+    }
+}
+
+// TODO: Make this a macro
+impl Recognizable for Bishop {
+    fn get_type(&self) -> PieceType {
+        self.piece_type.clone()
+    }
+}
+
+// TODO: Make this a macro
+impl Colored for Bishop {
+    fn get_color(&self) -> Color {
+        self.color.clone()
+    }
+}
+
+impl Moveset for Bishop {
     fn move_to(&mut self, destination: Position) {
         self.position = destination;
     }
@@ -65,22 +86,4 @@ impl Moveset for Rook {
     }
 }
 
-impl Colored for Rook {
-    fn get_color(&self) -> Color {
-        self.color.clone()
-    }
-}
-
-impl Recognizable for Rook {
-    fn get_type(&self) -> PieceType {
-        self.piece_type.clone()
-    }
-}
-
-impl CurrentPosition for Rook {
-    fn get_current_position(&self) -> Position {
-        self.position
-    }
-}
-
-impl Piece for Rook {}
+impl Piece for Bishop {}
