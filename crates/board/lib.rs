@@ -1,10 +1,14 @@
 mod board;
+mod piece;
 mod pieces;
 
 pub use board::Board;
-
-pub use pieces::Moveset;
-pub use pieces::Piece;
-pub use pieces::Rook;
-pub use pieces::{Color, Position};
-pub use pieces::{XAxis, YAxis};
+pub use piece::Colored;
+pub use piece::CurrentPosition;
+pub use piece::Effect;
+pub use piece::Move;
+pub use piece::Moveset;
+pub use piece::Recognizable;
+pub use piece::{Color, Position};
+pub use piece::{Piece, PieceType};
+pub use piece::{XAxis, YAxis};

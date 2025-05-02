@@ -1,4 +1,4 @@
-use crate::pieces::{Piece, Position, XAxis, YAxis};
+use crate::piece::{Piece, Position, XAxis, YAxis};
 
 pub struct Board {
     pieces: Vec<Box<dyn Piece>>,
