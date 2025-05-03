@@ -67,14 +67,25 @@ impl Moveset for Pawn {
             .map(|piece| piece.get_current_position())
             .collect();
 
+        let (bl, br, ul, ur) = board.get_limits();
         let possible_move_positions = possible_move_positions
             .into_iter()
             .filter(|position| !occupied_positions.contains(position))
-            .map(|position| Move::new(position, None));
+            .map(|position| {
+                let color = self.get_color();
+                // If it can move to the last lane, then it can get promoted
+                let effect = if (position.y == ul.0.y && color == Color::White)
+                    || (position.y == bl.0.y && color == Color::Black)
+                {
+                    Some(Effect::Promotion)
+                } else {
+                    None
+                };
+                Move::new(self.get_current_position(), position, effect)
+            });
 
         let enemy_possition: HashSet<_> = board
             .get_pieces()
-            .into_iter()
             .filter(|piece| piece.get_color() != self.color)
             .map(|piece| piece.get_current_position())
             .collect();
@@ -90,7 +101,7 @@ impl Moveset for Pawn {
         // TODO: Add en passant
         // TODO: Add initial double move
         .filter(|pos| enemy_possition.contains(pos))
-        .map(|pos| Move::new(pos, Some(Effect::Capture)));
+        .map(|pos| Move::new(self.get_current_position(), pos, Some(Effect::Capture)));
 
         let possible_move_positions: Vec<Move> = possible_move_positions
             .chain(possible_attack_positions)

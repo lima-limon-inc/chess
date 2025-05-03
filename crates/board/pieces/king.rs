@@ -78,9 +78,13 @@ impl Moveset for King {
             .map(|possible_position| {
                 // If you move to a Possition with an opponent, it has a side effect
                 if opponents.contains(&possible_position) {
-                    Move::new(possible_position, Some(Effect::Capture))
+                    Move::new(
+                        self.get_current_position(),
+                        possible_position,
+                        Some(Effect::Capture),
+                    )
                 } else {
-                    Move::new(possible_position, None)
+                    Move::new(self.get_current_position(), possible_position, None)
                 }
             })
             .collect();

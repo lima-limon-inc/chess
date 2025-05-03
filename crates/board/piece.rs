@@ -39,17 +39,17 @@ pub enum Color {
     White,
 }
 
-#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash)]
-pub struct XAxis(pub u8);
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash, Debug)]
+pub struct XAxis(pub i8);
 impl XAxis {
-    pub fn new(x: u8) -> Self {
+    pub fn new(x: i8) -> Self {
         XAxis(x)
     }
 }
-#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash)]
-pub struct YAxis(pub u8);
+#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash, Debug)]
+pub struct YAxis(pub i8);
 impl YAxis {
-    pub fn new(x: u8) -> Self {
+    pub fn new(x: i8) -> Self {
         YAxis(x)
     }
 }
@@ -109,19 +109,19 @@ impl Add for XAxis {
     }
 }
 
-impl From<u8> for YAxis {
-    fn from(value: u8) -> Self {
+impl From<i8> for YAxis {
+    fn from(value: i8) -> Self {
         YAxis::new(value)
     }
 }
 
-impl From<u8> for XAxis {
-    fn from(value: u8) -> Self {
+impl From<i8> for XAxis {
+    fn from(value: i8) -> Self {
         XAxis::new(value)
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {
     pub x: XAxis,
     pub y: YAxis,
@@ -173,22 +173,31 @@ impl Position {
     }
 }
 
+#[derive(Debug)]
 pub enum Effect {
     /// Capture a piece in the board
     Capture,
     /// A king and a rook castle
     Castling,
+    /// A pawn is promoted
+    Promotion,
 }
 
 /// This represent a move done by a piece. This means
+#[derive(Debug)]
 pub struct Move {
+    /// The place where the piece that will execute the move is standing on
+    origin: Position,
+    /// The place where the piece will end up
     destination: Position,
+    /// Any "side effect" that the move may have
     effect: Option<Effect>,
 }
 
 impl Move {
-    pub fn new(destination: Position, effect: Option<Effect>) -> Self {
+    pub fn new(origin: Position, destination: Position, effect: Option<Effect>) -> Self {
         Self {
+            origin,
             destination,
             effect,
         }
