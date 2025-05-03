@@ -54,7 +54,7 @@ impl Moveset for Queen {
 
         // This is the maximum possible range from the Rook's position
         let plus_range = PlusRange::from(horizontal_axis, vertical_axis);
-        let diagonal_range = Position::diagonal_range(self.get_current_position(), bl, br, ul, ur);
+        let diagonal_range = board.diagonal_range(self.get_current_position(), None);
         let max_range = StarRange::from(diagonal_range, plus_range);
 
         let (teammates, opponents): (Vec<_>, Vec<_>) = board

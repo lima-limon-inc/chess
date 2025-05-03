@@ -173,77 +173,6 @@ impl Position {
         HorizontalRange(range)
     }
 
-    pub fn diagonal_range(
-        origin: Position,
-        bl: BottomLeft,
-        br: BottomRight,
-        ul: UpperLeft,
-        ur: UpperRight,
-    ) -> DiagonalRange {
-        // We do each diagonal line
-        //         1\   /2
-        //           \ /
-        //            o
-        //           / \
-        //         3/   \4
-        let diagonals = vec![origin];
-
-        let center_to_ul = {
-            let mut upper_left = Vec::new();
-            let mut current = origin;
-
-            while current.x >= ul.0.x && current.y <= ul.0.y {
-                current.x -= 1.into();
-                current.y += 1.into();
-                upper_left.push(current);
-            }
-            upper_left
-        };
-        let center_to_ur = {
-            let mut upper_right = Vec::new();
-            let mut current = origin;
-
-            while current.x <= ur.0.x && current.y <= ur.0.y {
-                current.x += 1.into();
-                current.y += 1.into();
-                upper_right.push(current);
-            }
-            upper_right
-        };
-        let center_to_bl = {
-            let mut bottom_left = Vec::new();
-            let mut current = origin;
-
-            while current.x >= bl.0.x && current.y >= bl.0.y {
-                current.x -= 1.into();
-                current.y -= 1.into();
-                bottom_left.push(current);
-            }
-            bottom_left
-        };
-        let center_to_br = {
-            let mut bottom_right = Vec::new();
-            let mut current = origin;
-
-            while current.x <= br.0.x && current.y >= br.0.y {
-                current.x += 1.into();
-                current.y -= 1.into();
-                bottom_right.push(current);
-            }
-            bottom_right
-        };
-
-        DiagonalRange({
-            diagonals
-                .into_iter()
-                .chain(center_to_ul)
-                .chain(center_to_ur)
-                .chain(center_to_bl)
-                .chain(center_to_br)
-                .collect()
-        })
-    }
-
     pub fn add_y(self, y_axis: YAxis) -> Self {
         Position::new(self.x, self.y + y_axis)
     }
@@ -316,12 +245,6 @@ pub trait Recognizable {
 }
 
 pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {}
-
-// ================================== King =====================================
-struct King {
-    color: Color,
-    position: Position,
-}
 
 #[cfg(test)]
 mod tests {

@@ -38,10 +38,8 @@ impl Moveset for Bishop {
     }
 
     fn available_positions(&self, board: &Board) -> Vec<Move> {
-        let (bl, br, ul, ur) = board.get_limits();
-
         // This is the maximum possible range from the Bishop's position
-        let max_range = Position::diagonal_range(self.get_current_position(), bl, br, ul, ur);
+        let max_range = board.diagonal_range(self.get_current_position(), None);
 
         let (teammates, opponents): (Vec<_>, Vec<_>) = board
             .get_pieces()
