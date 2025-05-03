@@ -1,6 +1,6 @@
 use crate::piece::{
-    Color, DiagonalRange, HorizontalRange, Piece, PlusRange, Position, StarRange, VerticalRange,
-    XAxis, YAxis,
+    Color, DiagonalRange, HorizontalRange, Move, Piece, PlusRange, Position, StarRange,
+    VerticalRange, XAxis, YAxis,
 };
 use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
 use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
@@ -11,50 +11,10 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn new() -> Self {
+    /// Only intended for testing
+    fn new(pieces: Vec<Box<dyn Piece>>) -> Self {
         let dimensions = (XAxis::new(7), YAxis::new(7));
-        #[rustfmt::skip]
-        let pieces: Vec<Box<dyn Piece>> = vec![
-            // White pieces
-            // Pawns
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(0), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(1), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(2), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(3), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(4), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(5), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(6), YAxis::new(1)))),
-            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(7), YAxis::new(1)))),
-            // Other pieces
-            Box::new(Rook::new(Color::White, Position::new(XAxis::new(0), YAxis::new(0)))),
-            Box::new(Knight::new(Color::White, Position::new(XAxis::new(1), YAxis::new(0)))),
-            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(2), YAxis::new(0)))),
-            Box::new(Queen::new(Color::White, Position::new(XAxis::new(3), YAxis::new(0)))),
-            Box::new(King::new(Color::White, Position::new(XAxis::new(4), YAxis::new(0)))),
-            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(5), YAxis::new(0)))),
-            Box::new(Knight::new(Color::White, Position::new(XAxis::new(6), YAxis::new(0)))),
-            Box::new(Rook::new(Color::White, Position::new(XAxis::new(7), YAxis::new(0)))),
 
-            // Black pieces
-            // Pawns
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(6)))),
-            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(6)))),
-            // Other pieces
-            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(7)))),
-            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(7)))),
-            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(7)))),
-            Box::new(Queen::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(7)))),
-            Box::new(King::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(7)))),
-            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(7)))),
-            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(7)))),
-            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(7)))),
-        ];
         Board { pieces, dimensions }
     }
 
@@ -64,15 +24,15 @@ impl Board {
 
     pub fn get_limits(&self) -> (BottomLeft, BottomRight, UpperLeft, UpperRight) {
         let bl = BottomLeft(Position {
-            x: XAxis::new(0u8),
-            y: YAxis::new(0u8),
+            x: XAxis::new(0i8),
+            y: YAxis::new(0i8),
         });
         let br = BottomRight(Position {
             x: self.dimensions.0.clone(),
-            y: YAxis::new(0u8),
+            y: YAxis::new(0i8),
         });
         let ul = UpperLeft(Position {
-            x: XAxis::new(0u8),
+            x: XAxis::new(0i8),
             y: self.dimensions.1.clone(),
         });
         let ur = UpperRight(Position {
@@ -229,6 +189,69 @@ impl Board {
                 .collect()
         })
     }
+
+    pub fn get_moves_from(&self, pos: Position) -> Option<Vec<Move>> {
+        self.get_pieces()
+            .find(|piece| piece.get_current_position() == pos)
+            .map(|piece| piece.available_positions(self))
+    }
+
+    pub fn execute_move(&mut self, mov: Move) {
+        // TODO: Remove unwrap
+        let piece = self
+            .get_pieces()
+            .find(|piece| piece.get_current_position() == mov.origin)
+            .unwrap();
+    }
+}
+
+impl Default for Board {
+    fn default() -> Self {
+        let dimensions = (XAxis::new(7), YAxis::new(7));
+        #[rustfmt::skip]
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            // White pieces
+            // Pawns
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(0), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(1), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(2), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(3), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(4), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(5), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(6), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(7), YAxis::new(1)))),
+            // Other pieces
+            Box::new(Rook::new(Color::White, Position::new(XAxis::new(0), YAxis::new(0)))),
+            Box::new(Knight::new(Color::White, Position::new(XAxis::new(1), YAxis::new(0)))),
+            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(2), YAxis::new(0)))),
+            Box::new(Queen::new(Color::White, Position::new(XAxis::new(3), YAxis::new(0)))),
+            Box::new(King::new(Color::White, Position::new(XAxis::new(4), YAxis::new(0)))),
+            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(5), YAxis::new(0)))),
+            Box::new(Knight::new(Color::White, Position::new(XAxis::new(6), YAxis::new(0)))),
+            Box::new(Rook::new(Color::White, Position::new(XAxis::new(7), YAxis::new(0)))),
+
+            // Black pieces
+            // Pawns
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(6)))),
+            // Other pieces
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(7)))),
+            Box::new(Queen::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(7)))),
+            Box::new(King::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(7)))),
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(7)))),
+        ];
+        Board { pieces, dimensions }
+    }
 }
 
 #[cfg(test)]
@@ -237,6 +260,15 @@ mod tests {
 
     #[test]
     fn promotion_test() {
-        let board = Board::new();
+        let pieces: Vec<Box<dyn Piece>> = vec![Box::new(Pawn::new(
+            Color::White,
+            Position::new(XAxis::new(0), YAxis::new(6)),
+        ))];
+        let board = Board::new(pieces);
+
+        let moves = board
+            .get_moves_from(Position::new(0i8.into(), 6i8.into()))
+            .unwrap();
+        std::dbg!(moves);
     }
 }
