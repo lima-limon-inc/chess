@@ -101,11 +101,20 @@ pub struct VerticalRange(pub Vec<Position>);
 pub struct PlusRange(pub Vec<Position>);
 /// Range that is in the form of a multiplication symbol x
 pub struct DiagonalRange(pub Vec<Position>);
+/// Range that is in the form of a star, aka PlusRange + DiagonalRange
+pub struct StarRange(pub Vec<Position>);
 
 impl PlusRange {
     pub fn from(horizontal: HorizontalRange, vertical: VerticalRange) -> Self {
         let pos = horizontal.0.into_iter().chain(vertical.0).collect();
         PlusRange(pos)
+    }
+}
+
+impl StarRange {
+    pub fn from(diagonal: DiagonalRange, plus: PlusRange) -> Self {
+        let pos = diagonal.0.into_iter().chain(plus.0).collect();
+        StarRange(pos)
     }
 }
 
@@ -149,7 +158,7 @@ impl Position {
             let mut upper_left = Vec::new();
             let mut current = origin;
 
-            while current.x != ul.0.x && current.y != ul.0.y {
+            while current.x >= ul.0.x && current.y <= ul.0.y {
                 current.x -= 1.into();
                 current.y += 1.into();
                 upper_left.push(current);
@@ -160,7 +169,7 @@ impl Position {
             let mut upper_right = Vec::new();
             let mut current = origin;
 
-            while current.x != ur.0.x && current.y != ur.0.y {
+            while current.x <= ur.0.x && current.y <= ur.0.y {
                 current.x += 1.into();
                 current.y += 1.into();
                 upper_right.push(current);
@@ -171,7 +180,7 @@ impl Position {
             let mut bottom_left = Vec::new();
             let mut current = origin;
 
-            while current.x != ur.0.x && current.y != ur.0.y {
+            while current.x >= bl.0.x && current.y >= bl.0.y {
                 current.x -= 1.into();
                 current.y -= 1.into();
                 bottom_left.push(current);
@@ -182,13 +191,14 @@ impl Position {
             let mut bottom_right = Vec::new();
             let mut current = origin;
 
-            while current.x != ur.0.x && current.y != ur.0.y {
+            while current.x <= br.0.x && current.y >= br.0.y {
                 current.x += 1.into();
                 current.y -= 1.into();
                 bottom_right.push(current);
             }
             bottom_right
         };
+
         DiagonalRange({
             diagonals
                 .into_iter()
