@@ -175,6 +175,8 @@ impl Position {
 pub enum Effect {
     /// Capture a piece in the board
     Capture,
+    /// A king and a rook castle
+    Castling,
 }
 
 /// This represent a move done by a piece. This means
