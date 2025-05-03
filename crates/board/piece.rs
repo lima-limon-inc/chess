@@ -251,6 +251,14 @@ impl Position {
     pub fn sub_y(self, y_axis: YAxis) -> Self {
         Position::new(self.x, self.y - y_axis)
     }
+
+    pub fn add_x(self, x_axis: XAxis) -> Self {
+        Position::new(self.x + x_axis, self.y)
+    }
+
+    pub fn sub_x(self, x_axis: XAxis) -> Self {
+        Position::new(self.x - x_axis, self.y)
+    }
 }
 
 pub enum Effect {
@@ -311,11 +319,6 @@ pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {}
 
 // ================================== King =====================================
 struct King {
-    color: Color,
-    position: Position,
-}
-// ================================= Knight ====================================
-struct Knight {
     color: Color,
     position: Position,
 }
