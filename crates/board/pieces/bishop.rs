@@ -1,5 +1,5 @@
 use crate::{
-    piece::{HorizontalRange, PlusRange, VerticalRange},
+    piece::{HorizontalRange, PlusRange, Promoted, VerticalRange},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
     Recognizable,
 };
@@ -9,6 +9,12 @@ use std::collections::HashSet;
 pub struct Bishop {
     color: Color,
     position: Position,
+}
+
+impl Bishop {
+    pub fn new(color: Color, position: Position) -> Self {
+        Self { color, position }
+    }
 }
 
 // TODO: Make this a macro
@@ -72,3 +78,5 @@ impl Moveset for Bishop {
 }
 
 impl Piece for Bishop {}
+
+impl Promoted for Bishop {}

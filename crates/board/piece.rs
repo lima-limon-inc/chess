@@ -1,4 +1,5 @@
 use crate::board::Board;
+use crate::pieces::Pawn;
 use std::collections::HashSet;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -25,7 +26,7 @@ pub enum PieceType {
     Rook,
 }
 
-enum ChoiseOfPromotablePiece {
+pub enum ChoiceOfPromotablePiece {
     Bishop,
     Knight,
     Queen,
@@ -210,11 +211,13 @@ pub trait Colored {
     }
 }
 
-/// A piece that can be promoted into
-pub trait Promotable {}
+/// A piece that can be promoted
+pub trait Promotable: Piece {
+    fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted>;
+}
 
-/// A piece that can be promoted from (Pawn)
-pub trait Promotee {}
+/// A piece that can be promoted into
+pub trait Promoted: Piece {}
 
 /// A piece that can be promoted from (Pawn)
 pub trait CurrentPosition {
@@ -229,13 +232,3 @@ pub trait Recognizable {
 }
 
 pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn diagonal_range() {
-        panic!()
-    }
-}

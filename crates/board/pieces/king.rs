@@ -11,6 +11,12 @@ pub struct King {
     position: Position,
 }
 
+impl King {
+    pub fn new(color: Color, position: Position) -> Self {
+        Self { color, position }
+    }
+}
+
 // TODO: Make this a macro
 impl CurrentPosition for King {
     fn get_current_position(&self) -> Position {
@@ -38,8 +44,6 @@ impl Moveset for King {
     }
 
     fn available_positions(&self, board: &Board) -> Vec<Move> {
-        let (bl, br, ul, ur) = board.get_limits();
-
         // This is the maximum possible range from the King's position
 
         let vertical_axis = { board.vertical_range(self.get_current_position(), Some(1)) };

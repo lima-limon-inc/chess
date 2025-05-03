@@ -1,5 +1,9 @@
 use crate::{
-    piece::{HorizontalRange, PlusRange, StarRange, VerticalRange},
+    piece::{
+        ChoiceOfPromotablePiece, HorizontalRange, PlusRange, Promotable, Promoted, StarRange,
+        VerticalRange,
+    },
+    pieces::{Bishop, Knight, Queen, Rook},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
     Recognizable, XAxis, YAxis,
 };
@@ -9,7 +13,17 @@ use std::collections::HashSet;
 pub struct Pawn {
     color: Color,
     position: Position,
-    first_move: bool,
+    already_moved: bool,
+}
+
+impl Pawn {
+    pub fn new(color: Color, position: Position) -> Self {
+        Self {
+            color,
+            position,
+            already_moved: false,
+        }
+    }
 }
 
 // TODO: Make this a macro
@@ -74,6 +88,7 @@ impl Moveset for Pawn {
         .filter(|pos| board.is_inside(pos))
         // Remove attack moves that aren't attacking
         // TODO: Add en passant
+        // TODO: Add initial double move
         .filter(|pos| enemy_possition.contains(pos))
         .map(|pos| Move::new(pos, Some(Effect::Capture)));
 
@@ -86,3 +101,14 @@ impl Moveset for Pawn {
 }
 
 impl Piece for Pawn {}
+
+impl Promotable for Pawn {
+    fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted> {
+        match choice {
+            ChoiceOfPromotablePiece::Bishop => Box::new(Bishop::new(self.color, self.position)),
+            ChoiceOfPromotablePiece::Knight => Box::new(Knight::new(self.color, self.position)),
+            ChoiceOfPromotablePiece::Queen => Box::new(Queen::new(self.color, self.position)),
+            ChoiceOfPromotablePiece::Rook => Box::new(Rook::new(self.color, self.position)),
+        }
+    }
+}

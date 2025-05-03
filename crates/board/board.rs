@@ -1,7 +1,8 @@
 use crate::piece::{
-    DiagonalRange, HorizontalRange, Piece, PlusRange, Position, StarRange, VerticalRange, XAxis,
-    YAxis,
+    Color, DiagonalRange, HorizontalRange, Piece, PlusRange, Position, StarRange, VerticalRange,
+    XAxis, YAxis,
 };
+use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
 use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 
 pub struct Board {
@@ -10,6 +11,53 @@ pub struct Board {
 }
 
 impl Board {
+    pub fn new() -> Self {
+        let dimensions = (XAxis::new(7), YAxis::new(7));
+        #[rustfmt::skip]
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            // White pieces
+            // Pawns
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(0), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(1), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(2), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(3), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(4), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(5), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(6), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(7), YAxis::new(1)))),
+            // Other pieces
+            Box::new(Rook::new(Color::White, Position::new(XAxis::new(0), YAxis::new(0)))),
+            Box::new(Knight::new(Color::White, Position::new(XAxis::new(1), YAxis::new(0)))),
+            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(2), YAxis::new(0)))),
+            Box::new(Queen::new(Color::White, Position::new(XAxis::new(3), YAxis::new(0)))),
+            Box::new(King::new(Color::White, Position::new(XAxis::new(4), YAxis::new(0)))),
+            Box::new(Bishop::new(Color::White, Position::new(XAxis::new(5), YAxis::new(0)))),
+            Box::new(Knight::new(Color::White, Position::new(XAxis::new(6), YAxis::new(0)))),
+            Box::new(Rook::new(Color::White, Position::new(XAxis::new(7), YAxis::new(0)))),
+
+            // Black pieces
+            // Pawns
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(6)))),
+            // Other pieces
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(7)))),
+            Box::new(Queen::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(7)))),
+            Box::new(King::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(7)))),
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(7)))),
+        ];
+        Board { pieces, dimensions }
+    }
+
     pub fn get_pieces(&self) -> impl Iterator<Item = &Box<dyn Piece>> {
         self.pieces.iter()
     }
@@ -180,5 +228,15 @@ impl Board {
                 .chain(center_to_br)
                 .collect()
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn promotion_test() {
+        let board = Board::new();
     }
 }

@@ -1,7 +1,13 @@
-[package]
-name = "chess"
-version = "0.1.0"
-edition = "2024"
+# [package]
+# name = "chess"
+# version = "0.1.0"
+# edition = "2024"
 
-[dependencies]
-board = { path = "./crates/board/" }
+# [dependencies]
+# board = { path = "./crates/board/" }
+
+[workspace]
+resolver = "2"
+members  = [
+    "crates/board"
+]
