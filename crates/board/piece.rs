@@ -123,6 +123,7 @@ impl Position {
         Self { x, y }
     }
 
+    //TODO: Make more like diagonal. Take origin and limits
     pub fn vertical_range(start: &Position, end: &Position) -> VerticalRange {
         debug_assert!(start.y < end.y);
         let range = (start.y.0..=end.y.0)
@@ -131,6 +132,7 @@ impl Position {
         VerticalRange(range)
     }
 
+    //TODO: Make more like diagonal. Take origin and limits
     pub fn horizontal_range(start: &Position, end: &Position) -> HorizontalRange {
         debug_assert!(start.x < end.x);
         let range = (start.x.0..=end.x.0)
@@ -274,11 +276,6 @@ struct King {
 }
 // ================================= Knight ====================================
 struct Knight {
-    color: Color,
-    position: Position,
-}
-// ================================== Pawn =====================================
-struct Pawn {
     color: Color,
     position: Position,
 }

@@ -9,7 +9,6 @@ use std::collections::HashSet;
 pub struct Bishop {
     color: Color,
     position: Position,
-    piece_type: PieceType,
 }
 
 // TODO: Make this a macro
@@ -22,7 +21,7 @@ impl CurrentPosition for Bishop {
 // TODO: Make this a macro
 impl Recognizable for Bishop {
     fn get_type(&self) -> PieceType {
-        self.piece_type.clone()
+        PieceType::Bishop
     }
 }
 

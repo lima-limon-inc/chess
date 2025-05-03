@@ -9,7 +9,6 @@ use std::collections::HashSet;
 pub struct Rook {
     color: Color,
     position: Position,
-    piece_type: PieceType,
 }
 
 impl Moveset for Rook {
@@ -73,7 +72,7 @@ impl Colored for Rook {
 
 impl Recognizable for Rook {
     fn get_type(&self) -> PieceType {
-        self.piece_type.clone()
+        PieceType::Rook
     }
 }
 
