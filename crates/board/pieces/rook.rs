@@ -23,7 +23,7 @@ impl Moveset for Rook {
             let upper = Position::new(self.position.x, ul.0.y);
             let bottom = Position::new(self.position.x, bl.0.y);
 
-            Position::vertical_range(&bottom, &upper)
+            board.vertical_range(self.get_current_position(), None)
         };
         let horizontal_axis = {
             let left = Position::new(bl.0.x, self.position.y);

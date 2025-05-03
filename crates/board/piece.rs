@@ -39,14 +39,14 @@ pub enum Color {
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash)]
-pub struct XAxis(u8);
+pub struct XAxis(pub u8);
 impl XAxis {
     pub fn new(x: u8) -> Self {
         XAxis(x)
     }
 }
 #[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash)]
-pub struct YAxis(u8);
+pub struct YAxis(pub u8);
 impl YAxis {
     pub fn new(x: u8) -> Self {
         YAxis(x)
@@ -153,15 +153,6 @@ impl StarRange {
 impl Position {
     pub fn new(x: XAxis, y: YAxis) -> Self {
         Self { x, y }
-    }
-
-    //TODO: Make more like diagonal. Take origin and limits
-    pub fn vertical_range(start: &Position, end: &Position) -> VerticalRange {
-        debug_assert!(start.y < end.y);
-        let range = (start.y.0..=end.y.0)
-            .map(|y| Position::new(start.x, YAxis::new(y)))
-            .collect();
-        VerticalRange(range)
     }
 
     //TODO: Make more like diagonal. Take origin and limits
