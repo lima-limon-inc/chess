@@ -50,7 +50,7 @@ impl Moveset for Rook {
             .0
             .into_iter()
             // You can't move to a position where teammates are standing
-            .filter(|possible_position| teammates.contains(possible_position))
+            .filter(|possible_position| !teammates.contains(possible_position))
             .map(|possible_position| {
                 // If you move to a Possition with an opponent, it has a side effect
                 if opponents.contains(&possible_position) {

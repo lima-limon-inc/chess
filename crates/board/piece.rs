@@ -1,6 +1,6 @@
 use crate::board::Board;
 use std::collections::HashSet;
-use std::ops::{AddAssign, SubAssign};
+use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 pub struct BottomLeft(pub Position);
 pub struct BottomRight(pub Position);
@@ -58,6 +58,22 @@ impl AddAssign for YAxis {
     }
 }
 
+impl Sub for YAxis {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        YAxis::new(self.0 - other.0)
+    }
+}
+
+impl Add for YAxis {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self::Output {
+        YAxis::new(self.0 + other.0)
+    }
+}
+
 impl SubAssign for YAxis {
     fn sub_assign(&mut self, other: Self) {
         self.0 = self.0 - other.0;
@@ -73,6 +89,22 @@ impl AddAssign for XAxis {
 impl SubAssign for XAxis {
     fn sub_assign(&mut self, other: Self) {
         self.0 = self.0 - other.0;
+    }
+}
+
+impl Sub for XAxis {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        XAxis::new(self.0 - other.0)
+    }
+}
+
+impl Add for XAxis {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self::Output {
+        XAxis::new(self.0 + other.0)
     }
 }
 
@@ -210,6 +242,14 @@ impl Position {
                 .chain(center_to_br)
                 .collect()
         })
+    }
+
+    pub fn add_y(self, y_axis: YAxis) -> Self {
+        Position::new(self.x, self.y + y_axis)
+    }
+
+    pub fn sub_y(self, y_axis: YAxis) -> Self {
+        Position::new(self.x, self.y - y_axis)
     }
 }
 

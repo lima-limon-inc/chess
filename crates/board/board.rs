@@ -36,4 +36,13 @@ impl Board {
 
         (bl, br, ul, ur)
     }
+
+    pub fn is_inside(&self, pos: &Position) -> bool {
+        let (bl, br, ul, ur) = self.get_limits();
+
+        let within_x = bl.0.x <= pos.x && pos.x <= br.0.x;
+        let within_y = bl.0.y <= pos.y && pos.y <= ul.0.y;
+
+        within_x && within_y
+    }
 }
