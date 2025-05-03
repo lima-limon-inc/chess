@@ -19,7 +19,7 @@ impl Bishop {
 
 // TODO: Make this a macro
 impl CurrentPosition for Bishop {
-    fn get_current_position(&self) -> Position {
+    fn get_position(&self) -> Position {
         self.position
     }
 }
@@ -45,18 +45,18 @@ impl Moveset for Bishop {
 
     fn available_positions(&self, board: &Board) -> Vec<Move> {
         // This is the maximum possible range from the Bishop's position
-        let max_range = board.diagonal_range(self.get_current_position(), None);
+        let max_range = board.diagonal_range(self.get_position(), None);
 
         let (teammates, opponents): (Vec<_>, Vec<_>) = board
             .get_pieces()
             .partition(|piece| piece.get_color() == self.color);
         let teammates: HashSet<_> = teammates
             .into_iter()
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
         let opponents: HashSet<_> = opponents
             .into_iter()
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
 
         let possible_positions = max_range
@@ -68,12 +68,12 @@ impl Moveset for Bishop {
                 // If you move to a Possition with an opponent, it has a side effect
                 if opponents.contains(&possible_position) {
                     Move::new(
-                        self.get_current_position(),
+                        self.get_position(),
                         possible_position,
                         Some(Effect::Capture),
                     )
                 } else {
-                    Move::new(self.get_current_position(), possible_position, None)
+                    Move::new(self.get_position(), possible_position, None)
                 }
             })
             .collect();

@@ -192,7 +192,7 @@ impl Board {
 
     pub fn get_moves_from(&self, pos: Position) -> Option<Vec<Move>> {
         self.get_pieces()
-            .find(|piece| piece.get_current_position() == pos)
+            .find(|piece| piece.get_position() == pos)
             .map(|piece| piece.available_positions(self))
     }
 
@@ -200,7 +200,7 @@ impl Board {
         // TODO: Remove unwrap
         let piece = self
             .get_pieces()
-            .find(|piece| piece.get_current_position() == mov.origin)
+            .find(|piece| piece.get_position() == mov.origin)
             .unwrap();
     }
 }

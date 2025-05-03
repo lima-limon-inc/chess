@@ -187,7 +187,7 @@ pub enum Effect {
 #[derive(Debug)]
 pub struct Move {
     /// The place where the piece that will execute the move is standing on
-    origin: Position,
+    pub origin: Position,
     /// The place where the piece will end up
     destination: Position,
     /// Any "side effect" that the move may have
@@ -230,7 +230,7 @@ pub trait Promoted: Piece {}
 
 /// A piece that can be promoted from (Pawn)
 pub trait CurrentPosition {
-    fn get_current_position(&self) -> Position;
+    fn get_position(&self) -> Position;
 }
 
 /// Great name, huh? It means it returns a variant of PieceType

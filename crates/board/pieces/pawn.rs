@@ -28,7 +28,7 @@ impl Pawn {
 
 // TODO: Make this a macro
 impl CurrentPosition for Pawn {
-    fn get_current_position(&self) -> Position {
+    fn get_position(&self) -> Position {
         self.position
     }
 }
@@ -64,7 +64,7 @@ impl Moveset for Pawn {
 
         let occupied_positions: HashSet<_> = board
             .get_pieces()
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
 
         let (bl, br, ul, ur) = board.get_limits();
@@ -81,18 +81,18 @@ impl Moveset for Pawn {
                 } else {
                     None
                 };
-                Move::new(self.get_current_position(), position, effect)
+                Move::new(self.get_position(), position, effect)
             });
 
         let enemy_possition: HashSet<_> = board
             .get_pieces()
             .filter(|piece| piece.get_color() != self.color)
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
 
         let possible_attack_positions = vec![
-            Position::new(self.get_current_position().x - XAxis::new(1), move_up.y),
-            Position::new(self.get_current_position().x + XAxis::new(1), move_up.y),
+            Position::new(self.get_position().x - XAxis::new(1), move_up.y),
+            Position::new(self.get_position().x + XAxis::new(1), move_up.y),
         ]
         .into_iter()
         // Remove moves outside the board
@@ -101,7 +101,7 @@ impl Moveset for Pawn {
         // TODO: Add en passant
         // TODO: Add initial double move
         .filter(|pos| enemy_possition.contains(pos))
-        .map(|pos| Move::new(self.get_current_position(), pos, Some(Effect::Capture)));
+        .map(|pos| Move::new(self.get_position(), pos, Some(Effect::Capture)));
 
         let possible_move_positions: Vec<Move> = possible_move_positions
             .chain(possible_attack_positions)

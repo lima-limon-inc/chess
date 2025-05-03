@@ -19,7 +19,7 @@ impl Knight {
 
 // TODO: Make this a macro
 impl CurrentPosition for Knight {
-    fn get_current_position(&self) -> Position {
+    fn get_position(&self) -> Position {
         self.position
     }
 }
@@ -49,11 +49,11 @@ impl Moveset for Knight {
             .partition(|piece| piece.get_color() == self.color);
         let teammates: HashSet<_> = teammates
             .into_iter()
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
         let opponents: HashSet<_> = opponents
             .into_iter()
-            .map(|piece| piece.get_current_position())
+            .map(|piece| piece.get_position())
             .collect();
 
         let possible_positions = vec![
@@ -78,12 +78,12 @@ impl Moveset for Knight {
             // If you move to a Possition with an opponent, it has a side effect
             if opponents.contains(&possible_position) {
                 Move::new(
-                    self.get_current_position(),
+                    self.get_position(),
                     possible_position,
                     Some(Effect::Capture),
                 )
             } else {
-                Move::new(self.get_current_position(), possible_position, None)
+                Move::new(self.get_position(), possible_position, None)
             }
         })
         .collect();
