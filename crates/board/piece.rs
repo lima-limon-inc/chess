@@ -155,15 +155,6 @@ impl Position {
         Self { x, y }
     }
 
-    //TODO: Make more like diagonal. Take origin and limits
-    pub fn horizontal_range(start: &Position, end: &Position) -> HorizontalRange {
-        debug_assert!(start.x < end.x);
-        let range = (start.x.0..=end.x.0)
-            .map(|x| Position::new(XAxis::new(x), start.y))
-            .collect();
-        HorizontalRange(range)
-    }
-
     pub fn add_y(self, y_axis: YAxis) -> Self {
         Position::new(self.x, self.y + y_axis)
     }

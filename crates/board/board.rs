@@ -1,5 +1,6 @@
 use crate::piece::{
-    DiagonalRange, Piece, PlusRange, Position, StarRange, VerticalRange, XAxis, YAxis,
+    DiagonalRange, HorizontalRange, Piece, PlusRange, Position, StarRange, VerticalRange, XAxis,
+    YAxis,
 };
 use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 
@@ -46,6 +47,29 @@ impl Board {
         let within_y = bl.0.y <= pos.y && pos.y <= ul.0.y;
 
         within_x && within_y
+    }
+
+    pub fn horizontal_range(&self, origin: Position, limit: Option<u8>) -> HorizontalRange {
+        let (bl, br, ul, ur) = self.get_limits();
+
+        let up: Vec<_> = { (origin.y.0..ur.0.y.0).collect() };
+        let down: Vec<_> = { (ur.0.y.0..origin.y.0).rev().collect() };
+
+        let (up, down): (Vec<_>, Vec<_>) = if let Some(limit) = limit {
+            (
+                up.into_iter().take(limit.into()).collect(),
+                down.into_iter().take(limit.into()).collect(),
+            )
+        } else {
+            (up.into_iter().collect(), down.into_iter().collect())
+        };
+
+        HorizontalRange(
+            up.into_iter()
+                .chain(down)
+                .map(|y_axis| Position::new(origin.x, YAxis::new(y_axis)))
+                .collect(),
+        )
     }
 
     pub fn vertical_range(&self, origin: Position, limit: Option<u8>) -> VerticalRange {

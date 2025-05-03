@@ -17,19 +17,8 @@ impl Moveset for Rook {
     }
 
     fn available_positions(&self, board: &Board) -> Vec<Move> {
-        let (bl, _, ul, ur) = board.get_limits();
-
-        let vertical_axis = {
-            let upper = Position::new(self.position.x, ul.0.y);
-            let bottom = Position::new(self.position.x, bl.0.y);
-
-            board.vertical_range(self.get_current_position(), None)
-        };
-        let horizontal_axis = {
-            let left = Position::new(bl.0.x, self.position.y);
-            let right = Position::new(ur.0.x, self.position.y);
-            Position::horizontal_range(&left, &right)
-        };
+        let vertical_axis = { board.vertical_range(self.get_current_position(), None) };
+        let horizontal_axis = { board.horizontal_range(self.get_current_position(), None) };
 
         // This is the maximum possible range from the Rook's position
         let plus_range = PlusRange::from(horizontal_axis, vertical_axis);
