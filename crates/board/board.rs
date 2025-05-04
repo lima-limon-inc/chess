@@ -1,8 +1,9 @@
 use crate::piece::{
-    Color, DiagonalRange, HorizontalRange, Move, Piece, PlusRange, Position, StarRange,
-    VerticalRange, XAxis, YAxis,
+    ChoiceOfPromotablePiece, Color, DiagonalRange, HorizontalRange, Move, Piece, PlusRange,
+    Position, Promotable, StarRange, VerticalRange, XAxis, YAxis,
 };
 use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
+use crate::Effect;
 use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 
 pub struct Board {
@@ -197,11 +198,49 @@ impl Board {
     }
 
     pub fn execute_move(&mut self, mov: Move) {
-        // TODO: Remove unwrap
-        let piece = self
-            .get_pieces()
-            .find(|piece| piece.get_position() == mov.origin)
+        // TODO: Remove unwrap(s)
+
+        // TODO: Do this in one step; i'm doing it in two because of compilaton error
+        let index = self
+            .pieces
+            .iter()
+            .position(|piece| piece.get_position() == mov.origin)
             .unwrap();
+
+        let piece: &mut Box<dyn Piece> = self.pieces.get_mut(index).unwrap();
+
+        // piece.execute_move(mov);
+
+        piece.move_to(mov.destination);
+        match mov.effect {
+            Some(Effect::Capture) => (),
+            Some(Effect::Castling) => (),
+            Some(Effect::Promotion(choice)) => {
+                if let Some(choice) = choice {
+                    let promoted_piece = Board::promote_piece(choice, piece);
+                    *piece = promoted_piece;
+                } else {
+                    panic!("Tried to promote piece but no piece was specified");
+                }
+            }
+            None => (),
+        }
+    }
+    // TODO: Pub crate instead of pub
+    pub fn capture_piece(&mut self, pos: Position) {
+        // Retain pieces that have a different position
+        self.pieces.retain(|piece| piece.get_position() != pos);
+    }
+
+    fn promote_piece(choice: ChoiceOfPromotablePiece, original: &Box<dyn Piece>) -> Box<dyn Piece> {
+        let position = original.get_position();
+        let color = original.get_color();
+        match choice {
+            ChoiceOfPromotablePiece::Bishop => Box::new(Bishop::new(color, position)),
+            ChoiceOfPromotablePiece::Knight => Box::new(Knight::new(color, position)),
+            ChoiceOfPromotablePiece::Queen => Box::new(Queen::new(color, position)),
+            ChoiceOfPromotablePiece::Rook => Box::new(Rook::new(color, position)),
+        }
     }
 }
 
@@ -257,6 +296,7 @@ impl Default for Board {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::PieceType;
 
     #[test]
     fn promotion_test() {
@@ -264,11 +304,22 @@ mod tests {
             Color::White,
             Position::new(XAxis::new(0), YAxis::new(6)),
         ))];
-        let board = Board::new(pieces);
+        let mut board = Board::new(pieces);
 
-        let moves = board
+        let mut mov = board
             .get_moves_from(Position::new(0i8.into(), 6i8.into()))
+            .unwrap()
+            .into_iter()
+            .nth(0)
             .unwrap();
-        std::dbg!(moves);
+
+        mov.effect = Some(Effect::Promotion(Some(ChoiceOfPromotablePiece::Queen)));
+
+        board.execute_move(mov);
+
+        let result = board.get_pieces().nth(0).unwrap();
+        assert_eq!(result.get_color(), Color::White);
+        assert_eq!(result.get_position(), Position::new(0.into(), 7.into()));
+        assert_eq!(result.get_type(), PieceType::Queen);
     }
 }

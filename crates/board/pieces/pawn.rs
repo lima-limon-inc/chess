@@ -77,7 +77,7 @@ impl Moveset for Pawn {
                 let effect = if (position.y == ul.0.y && color == Color::White)
                     || (position.y == bl.0.y && color == Color::Black)
                 {
-                    Some(Effect::Promotion)
+                    Some(Effect::Promotion(None))
                 } else {
                     None
                 };
@@ -111,7 +111,19 @@ impl Moveset for Pawn {
     }
 }
 
-impl Piece for Pawn {}
+impl Piece for Pawn {
+    // fn execute_move(&mut self, mov: Move) {
+    //     todo!();
+    //     todo!();
+    //     match mov.effect {
+    //         Some(Effect::Promotion(promotee)) => {
+    //             let result = self.from(promotee.unwrap());
+    //             self = result
+    //         }
+    //         _ => todo!(),
+    //     }
+    // }
+}
 
 impl Promotable for Pawn {
     fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted> {

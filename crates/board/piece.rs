@@ -16,7 +16,7 @@ impl From<UpperLeft> for Position {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum PieceType {
     Bishop,
     King,
@@ -26,6 +26,7 @@ pub enum PieceType {
     Rook,
 }
 
+#[derive(Debug)]
 pub enum ChoiceOfPromotablePiece {
     Bishop,
     Knight,
@@ -33,7 +34,7 @@ pub enum ChoiceOfPromotablePiece {
     Rook,
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Color {
     Black,
     White,
@@ -179,8 +180,8 @@ pub enum Effect {
     Capture,
     /// A king and a rook castle
     Castling,
-    /// A pawn is promoted
-    Promotion,
+    /// A pawn is promoted. None means that a choice wasnt made yet
+    Promotion(Option<ChoiceOfPromotablePiece>),
 }
 
 /// This represent a move done by a piece. This means
@@ -189,9 +190,9 @@ pub struct Move {
     /// The place where the piece that will execute the move is standing on
     pub origin: Position,
     /// The place where the piece will end up
-    destination: Position,
+    pub destination: Position,
     /// Any "side effect" that the move may have
-    effect: Option<Effect>,
+    pub effect: Option<Effect>,
 }
 
 impl Move {
@@ -204,6 +205,7 @@ impl Move {
     }
 }
 
+// TODO: Remove all these traits, move to "piece" trait
 pub trait Moveset {
     fn move_to(&mut self, destination: Position) {
         todo!()
@@ -240,4 +242,9 @@ pub trait Recognizable {
     }
 }
 
-pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {}
+/// The piece can execute a Move
+pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {
+    fn execute_move(&mut self, mov: Move) {
+        todo!()
+    }
+}
