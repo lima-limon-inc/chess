@@ -207,17 +207,26 @@ impl Board {
             .position(|piece| piece.get_position() == mov.origin)
             .unwrap();
 
+        let enemy_piece = self
+            .pieces
+            .iter()
+            .position(|piece| piece.get_position() == mov.destination);
+
         let piece: &mut Box<dyn Piece> = self.pieces.get_mut(index).unwrap();
 
-        // piece.execute_move(mov);
-
         piece.move_to(mov.destination);
+
         match mov.effect {
-            Some(Effect::Capture) => (),
+            Some(Effect::Capture) => {
+                let enemy_piece = enemy_piece.expect(
+                    "Tried to capture an enemy at position, but there is no enemy at that position",
+                );
+                self.pieces.swap_remove(enemy_piece);
+            }
             Some(Effect::Castling) => (),
             Some(Effect::Promotion(choice)) => {
                 if let Some(choice) = choice {
-                    let promoted_piece = Board::promote_piece(choice, piece);
+                    let promoted_piece = Board::promote_piece(choice, piece.as_ref());
                     *piece = promoted_piece;
                 } else {
                     panic!("Tried to promote piece but no piece was specified");
@@ -232,7 +241,7 @@ impl Board {
         self.pieces.retain(|piece| piece.get_position() != pos);
     }
 
-    fn promote_piece(choice: ChoiceOfPromotablePiece, original: &Box<dyn Piece>) -> Box<dyn Piece> {
+    fn promote_piece(choice: ChoiceOfPromotablePiece, original: &dyn Piece) -> Box<dyn Piece> {
         let position = original.get_position();
         let color = original.get_color();
         match choice {
@@ -321,5 +330,36 @@ mod tests {
         assert_eq!(result.get_color(), Color::White);
         assert_eq!(result.get_position(), Position::new(0.into(), 7.into()));
         assert_eq!(result.get_type(), PieceType::Queen);
+    }
+
+    #[test]
+    fn capture_test() {
+        #[rustfmt::skip]
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Pawn::new(Color::White, Position::new(XAxis::new(0), YAxis::new(1)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(2)))),
+        ];
+        let mut board = Board::new(pieces);
+
+        let pieces: Vec<_> = board.get_pieces().collect();
+        assert_eq!(pieces.len(), 2);
+
+        let mov = board
+            .get_moves_from(Position::new(0i8.into(), 1i8.into()))
+            .unwrap()
+            .into_iter()
+            .filter(|mov| mov.effect.is_some())
+            .nth(0)
+            .unwrap();
+
+        board.execute_move(mov);
+
+        let result: Vec<_> = board.get_pieces().collect();
+        assert_eq!(result.len(), 1);
+
+        let result = board.get_pieces().nth(0).unwrap();
+        assert_eq!(result.get_color(), Color::White);
+        assert_eq!(result.get_position(), Position::new(1.into(), 2.into()));
+        assert_eq!(result.get_type(), PieceType::Pawn);
     }
 }
