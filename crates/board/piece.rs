@@ -14,7 +14,7 @@ impl From<UpperLeft> for Position {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PieceType {
     Bishop,
     King,
@@ -32,7 +32,7 @@ pub enum ChoiceOfPromotablePiece {
     Rook,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, PartialOrd, Ord)]
 pub enum Color {
     Black,
     White,
