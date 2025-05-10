@@ -9,11 +9,16 @@ use std::collections::HashSet;
 pub struct Rook {
     color: Color,
     position: Position,
+    already_moved: bool,
 }
 
 impl Rook {
     pub fn new(color: Color, position: Position) -> Self {
-        Self { color, position }
+        Self {
+            color,
+            position,
+            already_moved: false,
+        }
     }
 }
 
@@ -41,6 +46,27 @@ impl Moveset for Rook {
             .map(|piece| piece.get_position())
             .collect();
 
+        let castling = {
+            if self.already_moved == true {
+                return Vec::new();
+            }
+            let king = board
+                .find_pieces(Some(PieceType::King), Some(self.color))
+                .nth(0)
+                .expect("More than one king in the board");
+
+            if king.was_moved() == true {
+                return Vec::new();
+            }
+            let distance = king.get_position().sub_x(self.get_position().x);
+            let rook_position = distance.sub_x(1.into());
+
+            let rook_move = Move::new(self.get_position(), rook_position, Some(Effect::Castling));
+
+            vec![rook_move]
+        }
+        .into_iter();
+
         let possible_positions = plus_range
             .0
             .into_iter()
@@ -58,6 +84,7 @@ impl Moveset for Rook {
                     Move::new(self.get_position(), possible_position, None)
                 }
             })
+            .chain(castling)
             .collect();
         possible_positions
     }

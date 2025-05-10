@@ -9,11 +9,16 @@ use std::collections::HashSet;
 pub struct King {
     color: Color,
     position: Position,
+    already_moved: bool,
 }
 
 impl King {
     pub fn new(color: Color, position: Position) -> Self {
-        Self { color, position }
+        Self {
+            color,
+            position,
+            already_moved: false,
+        }
     }
 }
 
@@ -92,4 +97,8 @@ impl Moveset for King {
     }
 }
 
-impl Piece for King {}
+impl Piece for King {
+    fn was_moved(&self) -> bool {
+        self.already_moved
+    }
+}

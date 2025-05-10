@@ -34,7 +34,7 @@ pub enum ChoiceOfPromotablePiece {
     Rook,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Color {
     Black,
     White,
@@ -244,7 +244,13 @@ pub trait Recognizable {
 
 /// The piece can execute a Move
 pub trait Piece: Colored + Moveset + Recognizable + CurrentPosition {
-    fn execute_move(&mut self, mov: Move) {
+    fn was_moved(&self) -> bool {
         todo!()
     }
 }
+// trait Sub: Super {}
+// trait Super {}
+
+// fn upcast(x: &dyn Sub) -> &dyn Super {
+//     x // implicit coercion
+// }

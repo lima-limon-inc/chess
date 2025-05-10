@@ -1,6 +1,6 @@
 use crate::piece::{
-    ChoiceOfPromotablePiece, Color, DiagonalRange, HorizontalRange, Move, Piece, PlusRange,
-    Position, Promotable, StarRange, VerticalRange, XAxis, YAxis,
+    ChoiceOfPromotablePiece, Color, DiagonalRange, HorizontalRange, Move, Piece, PieceType,
+    PlusRange, Position, Promotable, StarRange, VerticalRange, XAxis, YAxis,
 };
 use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
 use crate::Effect;
@@ -223,7 +223,7 @@ impl Board {
                 );
                 self.pieces.swap_remove(enemy_piece);
             }
-            Some(Effect::Castling) => (),
+            Some(Effect::Castling) => todo!(),
             Some(Effect::Promotion(choice)) => {
                 if let Some(choice) = choice {
                     let promoted_piece = Board::promote_piece(choice, piece.as_ref());
@@ -250,6 +250,29 @@ impl Board {
             ChoiceOfPromotablePiece::Queen => Box::new(Queen::new(color, position)),
             ChoiceOfPromotablePiece::Rook => Box::new(Rook::new(color, position)),
         }
+    }
+
+    // TODO: Use this function for the other functions for the differnet pieces.
+    pub fn find_pieces(
+        &self,
+        piece_type_filter: Option<PieceType>,
+        color_filter: Option<Color>,
+    ) -> impl Iterator<Item = &Box<dyn Piece>> {
+        self.get_pieces()
+            .filter(move |piece| {
+                if let Some(piece_type_filter) = &piece_type_filter {
+                    piece.get_type() == *piece_type_filter
+                } else {
+                    true
+                }
+            })
+            .filter(move |piece| {
+                if let Some(color_filter) = color_filter {
+                    piece.get_color() == color_filter
+                } else {
+                    true
+                }
+            })
     }
 }
 
