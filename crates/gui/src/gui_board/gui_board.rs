@@ -98,7 +98,14 @@ fn draw_pieces(
 
         let texture = images.get(&(type_of, color)).unwrap();
 
-        rldraw.draw_texture(texture, x * TILE_SIZE, y * TILE_SIZE, Color::WHITE);
+        rldraw.draw_texture(
+            texture,
+            // Oh, these numbers? Just corrections
+            // TODO: Clean this shit up
+            x * TILE_SIZE - 15,
+            y * TILE_SIZE - 18,
+            Color::WHITE,
+        );
     }
 }
 
