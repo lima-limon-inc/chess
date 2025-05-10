@@ -72,6 +72,41 @@ impl Moveset for King {
             .map(|piece| piece.get_position())
             .collect();
 
+        let castling = {
+            if self.already_moved == true {
+                return Vec::new();
+            }
+
+            //TODO: Check if there are no kings
+            let rooks: Vec<_> = board
+                .find_pieces(Some(PieceType::Rook), Some(self.color))
+                // Only get rooks that haven't been moved
+                .filter(|rook| rook.was_moved() == false)
+                .map(|rook| {
+                    let distance = self.get_position().sub_x(rook.get_position().x);
+                    let normalized_distance = distance.x.0.abs();
+                    let direction: i8 = distance.x.0 / normalized_distance;
+
+                    let rook_position = rook.get_position();
+
+                    let rook_destination = self.get_position().sub_x((1 * direction).into());
+                    let king_destination = self.get_position().sub_x((2 * direction).into());
+
+                    Move::new(
+                        self.get_position(),
+                        king_destination,
+                        Some(Effect::Castling {
+                            origin: rook_position,
+                            destination: rook_destination,
+                        }),
+                    )
+                })
+                .collect();
+
+            rooks
+        }
+        .into_iter();
+
         // TODO Castling
         // TODO Moves that put you in check
         // TODO King is in adjacent square.
@@ -92,6 +127,7 @@ impl Moveset for King {
                     Move::new(self.get_position(), possible_position, None)
                 }
             })
+            .chain(castling)
             .collect();
         possible_positions
     }

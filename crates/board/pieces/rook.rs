@@ -123,6 +123,10 @@ impl CurrentPosition for Rook {
     }
 }
 
-impl Piece for Rook {}
+impl Piece for Rook {
+    fn was_moved(&self) -> bool {
+        self.already_moved
+    }
+}
 
 impl Promoted for Rook {}

@@ -489,4 +489,133 @@ mod tests {
         assert_eq!(rook.get_color(), Color::White);
         assert_eq!(rook.get_position(), Position::new(3.into(), 0.into()));
     }
+
+    #[test]
+    fn castling_queen_side_from_king_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(0), YAxis::new(0)),
+            )),
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(7), YAxis::new(0)),
+            )),
+            Box::new(King::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(0)),
+            )),
+        ];
+        let mut board = Board::new(pieces);
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(4i8.into(), 0i8.into()))
+            .unwrap()
+            .into_iter()
+            .filter(|mov| mov.effect.is_some())
+            .collect();
+
+        assert_eq!(moves.len(), 2);
+
+        let queen_rook_move = moves
+            .into_iter()
+            .filter(|mov| match mov.effect {
+                Some(Effect::Castling {
+                    origin,
+                    destination,
+                }) => {
+                    let queen = Position::new(0.into(), 0.into());
+                    matches!(origin, queen)
+                }
+                _ => false,
+            })
+            .nth(0)
+            .unwrap();
+
+        board.execute_move(queen_rook_move);
+
+        let result: Vec<_> = board.get_pieces().collect();
+        assert_eq!(result.len(), 3);
+
+        let king = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::King)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(king.get_color(), Color::White);
+        assert_eq!(king.get_position(), Position::new(2.into(), 0.into()));
+
+        let rook = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::Rook)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(rook.get_color(), Color::White);
+        assert_eq!(rook.get_position(), Position::new(3.into(), 0.into()));
+    }
+
+    #[test]
+    fn castling_king_side_from_king_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(0), YAxis::new(0)),
+            )),
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(7), YAxis::new(0)),
+            )),
+            Box::new(King::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(0)),
+            )),
+        ];
+        let mut board = Board::new(pieces);
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(4i8.into(), 0i8.into()))
+            .unwrap()
+            .into_iter()
+            .filter(|mov| mov.effect.is_some())
+            .collect();
+
+        assert_eq!(moves.len(), 2);
+        let king_rook_move = moves
+            .into_iter()
+            .filter(|mov| match mov.effect {
+                Some(Effect::Castling {
+                    origin,
+                    destination,
+                }) => {
+                    let king_pos = Position::new(7.into(), 0.into());
+                    origin == king_pos
+                }
+                _ => false,
+            })
+            .nth(0)
+            .unwrap();
+
+        board.execute_move(king_rook_move);
+
+        let result: Vec<_> = board.get_pieces().collect();
+        assert_eq!(result.len(), 3);
+
+        let king = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::King)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(king.get_color(), Color::White);
+        assert_eq!(king.get_position(), Position::new(6.into(), 0.into()));
+
+        let rook = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::Rook)
+            .nth(1)
+            .unwrap();
+
+        assert_eq!(rook.get_color(), Color::White);
+        assert_eq!(rook.get_position(), Position::new(5.into(), 0.into()));
+    }
 }
