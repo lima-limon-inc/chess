@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 raylib = { version = "5.5" }
+board = { path = "../board" }
+
