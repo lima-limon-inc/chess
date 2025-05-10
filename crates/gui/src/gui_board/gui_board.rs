@@ -60,7 +60,7 @@ impl GuiBoard {
         while !self.rl.window_should_close() {
             let mut d = self.rl.begin_drawing(&self.thread);
             draw_tiles(&mut d);
-            draw_pieces(&mut d, &self.board);
+            draw_pieces(&self.images, &mut d, &self.board);
             get_clicked_tile(&d).map(|_| panic!());
         }
     }
@@ -80,7 +80,11 @@ fn draw_tiles(rldraw: &mut RaylibDrawHandle) {
     }
 }
 
-fn draw_pieces(rldraw: &mut RaylibDrawHandle, board: &Board) {
+fn draw_pieces(
+    images: &BTreeMap<(PieceType, PieceColor), Texture2D>,
+    rldraw: &mut RaylibDrawHandle,
+    board: &Board,
+) {
     let drawable_piece = board
         .get_pieces()
         .map(|piece| (piece, translate_piece(piece.get_type())));
@@ -88,13 +92,13 @@ fn draw_pieces(rldraw: &mut RaylibDrawHandle, board: &Board) {
     for (piece, draw) in drawable_piece {
         let x: i32 = piece.get_position().x.0.into();
         let y: i32 = piece.get_position().y.0.into();
-        rldraw.draw_text(
-            draw.as_str(),
-            (x * TILE_SIZE).into(),
-            (y * TILE_SIZE).into(),
-            50,
-            Color::RED,
-        );
+
+        let color = piece.get_color();
+        let type_of = piece.get_type();
+
+        let texture = images.get(&(type_of, color)).unwrap();
+
+        rldraw.draw_texture(texture, x * TILE_SIZE, y * TILE_SIZE, Color::WHITE);
     }
 }
 
