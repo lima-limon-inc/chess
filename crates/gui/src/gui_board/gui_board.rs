@@ -57,7 +57,7 @@ impl GuiBoard {
         }
     }
     pub fn start(&mut self) {
-        let mut available_moves: Vec<Move> = Vec::new();
+        let mut available_moves: Option<Vec<Move>> = None;
 
         while !self.rl.window_should_close() {
             let mut d = self.rl.begin_drawing(&self.thread);
@@ -65,7 +65,11 @@ impl GuiBoard {
             draw_pieces(&self.images, &mut d, &self.board);
 
             if let Some(position) = get_clicked_tile(&d) {
-                std::dbg!(self.board.get_moves_from(position));
+                available_moves = self.board.get_moves_from(position);
+            }
+
+            if let Some(ref moves) = available_moves {
+                draw_moves(&mut d, moves);
             }
         }
     }
@@ -90,13 +94,12 @@ fn draw_pieces(
     rldraw: &mut RaylibDrawHandle,
     board: &Board,
 ) {
-    let drawable_piece = board
-        .get_pieces()
-        .map(|piece| (piece, translate_piece(piece.get_type())));
+    let drawable_piece = board.get_pieces();
 
-    for (piece, draw) in drawable_piece {
+    for piece in drawable_piece {
         let x: i32 = piece.get_position().x.0.into();
-        let y: i32 = piece.get_position().y.0.into();
+        let y = piece.get_position().y.0;
+        let y: i32 = (7 - y).into();
 
         let color = piece.get_color();
         let type_of = piece.get_type();
@@ -123,7 +126,7 @@ fn get_clicked_tile(b: &RaylibDrawHandle) -> Option<Position> {
     let mouse_position = b.get_mouse_position();
     // TODO: Add constant
     let x_tile = (mouse_position.x / 120.0).floor();
-    let y_tile = 7.0 - (mouse_position.y / 120.0).floor();
+    let y_tile = (mouse_position.y / 120.0).floor();
 
     let x_tile: i8 = x_tile as i8;
     let y_tile: i8 = y_tile as i8;
@@ -137,5 +140,21 @@ fn translate_piece(piece_id: PieceType) -> String {
     match piece_id {
         PieceType::Bishop => "b".into(),
         _ => "a".into(),
+    }
+}
+
+fn draw_moves(rldraw: &mut RaylibDrawHandle, moves: &Vec<Move>) {
+    for mov in moves {
+        let destination = mov.destination;
+        let x: i32 = destination.x.0.into();
+        let y: i32 = destination.y.0.into();
+
+        rldraw.draw_rectangle(
+            TILE_SIZE * x,
+            TILE_SIZE * y,
+            TILE_SIZE,
+            TILE_SIZE,
+            Color::GREEN,
+        );
     }
 }
