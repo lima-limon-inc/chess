@@ -3,7 +3,7 @@ use raylib::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
 
-use board::{Board, Color as PieceColor, PieceType};
+use board::{Board, Color as PieceColor, Move, PieceType, Position};
 
 const TILE_SIZE: i32 = 120;
 
@@ -57,11 +57,16 @@ impl GuiBoard {
         }
     }
     pub fn start(&mut self) {
+        let mut available_moves: Vec<Move> = Vec::new();
+
         while !self.rl.window_should_close() {
             let mut d = self.rl.begin_drawing(&self.thread);
             draw_tiles(&mut d);
             draw_pieces(&self.images, &mut d, &self.board);
-            get_clicked_tile(&d).map(|_| panic!());
+
+            if let Some(position) = get_clicked_tile(&d) {
+                std::dbg!(self.board.get_moves_from(position));
+            }
         }
     }
 }
@@ -109,7 +114,7 @@ fn draw_pieces(
     }
 }
 
-fn get_clicked_tile(b: &RaylibDrawHandle) -> Option<Vector2> {
+fn get_clicked_tile(b: &RaylibDrawHandle) -> Option<Position> {
     let was_click = b.is_mouse_button_pressed(MouseButton::MOUSE_BUTTON_LEFT);
     if was_click == false {
         return None;
@@ -120,7 +125,10 @@ fn get_clicked_tile(b: &RaylibDrawHandle) -> Option<Vector2> {
     let x_tile = (mouse_position.x / 120.0).floor();
     let y_tile = 7.0 - (mouse_position.y / 120.0).floor();
 
-    Some(Vector2::new(x_tile, y_tile))
+    let x_tile: i8 = x_tile as i8;
+    let y_tile: i8 = y_tile as i8;
+
+    Some(Position::new(x_tile.into(), y_tile.into()))
 }
 
 // /// Get representation of piece
