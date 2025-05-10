@@ -179,7 +179,12 @@ pub enum Effect {
     /// Capture a piece in the board
     Capture,
     /// A king and a rook castle
-    Castling,
+    Castling {
+        /// Other Piece origin
+        origin: Position,
+        /// Other Piece destination
+        destination: Position,
+    },
     /// A pawn is promoted. None means that a choice wasnt made yet
     Promotion(Option<ChoiceOfPromotablePiece>),
 }

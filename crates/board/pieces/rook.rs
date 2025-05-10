@@ -50,6 +50,8 @@ impl Moveset for Rook {
             if self.already_moved == true {
                 return Vec::new();
             }
+
+            //TODO: Check if there are no kings
             let king = board
                 .find_pieces(Some(PieceType::King), Some(self.color))
                 .nth(0)
@@ -59,9 +61,22 @@ impl Moveset for Rook {
                 return Vec::new();
             }
             let distance = king.get_position().sub_x(self.get_position().x);
-            let rook_position = distance.sub_x(1.into());
+            let normalized_distance = distance.x.0.abs();
+            let direction: i8 = distance.x.0 / normalized_distance;
 
-            let rook_move = Move::new(self.get_position(), rook_position, Some(Effect::Castling));
+            let king_position = self.get_position().add_x(distance.x);
+
+            let rook_destination = king_position.sub_x((1 * direction).into());
+            let king_destination = king_position.sub_x((2 * direction).into());
+
+            let rook_move = Move::new(
+                self.get_position(),
+                rook_destination,
+                Some(Effect::Castling {
+                    origin: king.get_position(),
+                    destination: king_destination,
+                }),
+            );
 
             vec![rook_move]
         }

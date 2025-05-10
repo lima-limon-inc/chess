@@ -223,7 +223,21 @@ impl Board {
                 );
                 self.pieces.swap_remove(enemy_piece);
             }
-            Some(Effect::Castling) => todo!(),
+            Some(Effect::Castling {
+                origin,
+                destination,
+            }) => {
+                let other_piece_index = self
+                    .pieces
+                    .iter()
+                    .position(|piece| piece.get_position() == origin)
+                    .unwrap();
+
+                let other_piece: &mut Box<dyn Piece> =
+                    self.pieces.get_mut(other_piece_index).unwrap();
+
+                other_piece.move_to(destination);
+            }
             Some(Effect::Promotion(choice)) => {
                 if let Some(choice) = choice {
                     let promoted_piece = Board::promote_piece(choice, piece.as_ref());
@@ -384,5 +398,95 @@ mod tests {
         assert_eq!(result.get_color(), Color::White);
         assert_eq!(result.get_position(), Position::new(1.into(), 2.into()));
         assert_eq!(result.get_type(), PieceType::Pawn);
+    }
+
+    #[test]
+    fn castling_king_side_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(7), YAxis::new(0)),
+            )),
+            Box::new(King::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(0)),
+            )),
+        ];
+        let mut board = Board::new(pieces);
+        let mov = board
+            .get_moves_from(Position::new(7i8.into(), 0i8.into()))
+            .unwrap()
+            .into_iter()
+            .filter(|mov| mov.effect.is_some())
+            .nth(0)
+            .unwrap();
+
+        board.execute_move(mov);
+
+        let result: Vec<_> = board.get_pieces().collect();
+        assert_eq!(result.len(), 2);
+
+        let king = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::King)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(king.get_color(), Color::White);
+        assert_eq!(king.get_position(), Position::new(6.into(), 0.into()));
+
+        let rook = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::Rook)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(rook.get_color(), Color::White);
+        assert_eq!(rook.get_position(), Position::new(5.into(), 0.into()));
+    }
+
+    #[test]
+    fn castling_queen_side_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Rook::new(
+                Color::White,
+                Position::new(XAxis::new(0), YAxis::new(0)),
+            )),
+            Box::new(King::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(0)),
+            )),
+        ];
+        let mut board = Board::new(pieces);
+        let mov = board
+            .get_moves_from(Position::new(0i8.into(), 0i8.into()))
+            .unwrap()
+            .into_iter()
+            .filter(|mov| mov.effect.is_some())
+            .nth(0)
+            .unwrap();
+
+        board.execute_move(mov);
+
+        let result: Vec<_> = board.get_pieces().collect();
+        assert_eq!(result.len(), 2);
+
+        let king = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::King)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(king.get_color(), Color::White);
+        assert_eq!(king.get_position(), Position::new(2.into(), 0.into()));
+
+        let rook = board
+            .get_pieces()
+            .filter(|piece| piece.get_type() == PieceType::Rook)
+            .nth(0)
+            .unwrap();
+
+        assert_eq!(rook.get_color(), Color::White);
+        assert_eq!(rook.get_position(), Position::new(3.into(), 0.into()));
     }
 }
