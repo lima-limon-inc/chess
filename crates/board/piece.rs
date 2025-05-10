@@ -129,13 +129,18 @@ pub struct Position {
 }
 
 // TODO: Remove pub here
+#[derive(Debug)]
 pub struct HorizontalRange(pub Vec<Position>);
+#[derive(Debug)]
 pub struct VerticalRange(pub Vec<Position>);
 /// Range that is in the form of a plus symbol +
+#[derive(Debug)]
 pub struct PlusRange(pub Vec<Position>);
 /// Range that is in the form of a multiplication symbol x
+#[derive(Debug)]
 pub struct DiagonalRange(pub Vec<Position>);
 /// Range that is in the form of a star, aka PlusRange + DiagonalRange
+#[derive(Debug)]
 pub struct StarRange(pub Vec<Position>);
 
 impl PlusRange {
@@ -212,19 +217,13 @@ impl Move {
 
 // TODO: Remove all these traits, move to "piece" trait
 pub trait Moveset {
-    fn move_to(&mut self, destination: Position) {
-        todo!()
-    }
+    fn move_to(&mut self, destination: Position);
 
-    fn available_positions(&self, board: &Board) -> Vec<Move> {
-        todo!()
-    }
+    fn available_positions(&self, board: &Board) -> Vec<Move>;
 }
 
 pub trait Colored {
-    fn get_color(&self) -> Color {
-        todo!()
-    }
+    fn get_color(&self) -> Color;
 }
 
 /// A piece that can be promoted
@@ -242,9 +241,7 @@ pub trait CurrentPosition {
 
 /// Great name, huh? It means it returns a variant of PieceType
 pub trait Recognizable {
-    fn get_type(&self) -> PieceType {
-        todo!()
-    }
+    fn get_type(&self) -> PieceType;
 }
 
 /// The piece can execute a Move

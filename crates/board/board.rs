@@ -119,30 +119,43 @@ impl Board {
             let mut upper_left = Vec::new();
             let mut current = origin;
 
-            while current.x >= ul.0.x && current.y <= ul.0.y {
+            loop {
+                current.x -= 1.into();
+                current.y += 1.into();
+
                 if let Some(limit) = limit {
                     if upper_left.len() >= limit.into() {
                         break;
                     }
                 };
-                current.x -= 1.into();
-                current.y += 1.into();
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
                 upper_left.push(current);
             }
             upper_left
         };
+
         let center_to_ur = {
             let mut upper_right = Vec::new();
             let mut current = origin;
 
-            while current.x <= ur.0.x && current.y <= ur.0.y {
+            loop {
+                current.x += 1.into();
+                current.y += 1.into();
+
                 if let Some(limit) = limit {
                     if upper_right.len() >= limit.into() {
                         break;
                     }
                 };
-                current.x += 1.into();
-                current.y += 1.into();
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
                 upper_right.push(current);
             }
             upper_right
@@ -151,14 +164,20 @@ impl Board {
             let mut bottom_left = Vec::new();
             let mut current = origin;
 
-            while current.x >= bl.0.x && current.y >= bl.0.y {
+            loop {
+                current.x -= 1.into();
+                current.y -= 1.into();
+
                 if let Some(limit) = limit {
                     if bottom_left.len() >= limit.into() {
                         break;
                     }
                 };
-                current.x -= 1.into();
-                current.y -= 1.into();
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
                 bottom_left.push(current);
             }
             bottom_left
@@ -167,14 +186,20 @@ impl Board {
             let mut bottom_right = Vec::new();
             let mut current = origin;
 
-            while current.x <= br.0.x && current.y >= br.0.y {
+            while self.is_inside(&current) {
+                current.x += 1.into();
+                current.y -= 1.into();
+
                 if let Some(limit) = limit {
                     if bottom_right.len() >= limit.into() {
                         break;
                     }
                 };
-                current.x += 1.into();
-                current.y -= 1.into();
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
                 bottom_right.push(current);
             }
             bottom_right
@@ -612,10 +637,30 @@ mod tests {
         let rook = board
             .get_pieces()
             .filter(|piece| piece.get_type() == PieceType::Rook)
+            // TODO: Remove .nth
             .nth(1)
             .unwrap();
 
         assert_eq!(rook.get_color(), Color::White);
         assert_eq!(rook.get_position(), Position::new(5.into(), 0.into()));
+    }
+
+    #[test]
+    fn movements_within_bounds_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![Box::new(Queen::new(
+            Color::White,
+            Position::new(XAxis::new(0), YAxis::new(0)),
+        ))];
+        let mut board = Board::new(pieces);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(0i8.into(), 0i8.into()))
+            .unwrap();
+
+        for mov in moves {
+            let destination = mov.destination;
+            assert!(destination.x.0 >= 0);
+            assert!(destination.y.0 >= 0);
+        }
     }
 }
