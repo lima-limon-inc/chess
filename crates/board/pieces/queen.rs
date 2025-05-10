@@ -1,5 +1,5 @@
 use crate::{
-    piece::{HorizontalRange, Piece, PlusRange, Promoted, StarRange, VerticalRange},
+    piece::{Piece, PlusRange, StarRange},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, PieceType, Position,
     Recognizable,
 };
@@ -87,5 +87,3 @@ impl Moveset for Queen {
 }
 
 impl Piece for Queen {}
-
-impl Promoted for Queen {}

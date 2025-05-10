@@ -1,5 +1,4 @@
 use crate::{
-    piece::{HorizontalRange, PlusRange, Promoted, VerticalRange},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
     Recognizable,
 };
@@ -82,5 +81,3 @@ impl Moveset for Bishop {
 }
 
 impl Piece for Bishop {}
-
-impl Promoted for Bishop {}

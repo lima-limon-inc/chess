@@ -1,6 +1,4 @@
 use crate::board::Board;
-use crate::pieces::Pawn;
-use std::collections::HashSet;
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
 pub struct BottomLeft(pub Position);
@@ -225,14 +223,6 @@ pub trait Moveset {
 pub trait Colored {
     fn get_color(&self) -> Color;
 }
-
-/// A piece that can be promoted
-pub trait Promotable: Piece {
-    fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted>;
-}
-
-/// A piece that can be promoted into
-pub trait Promoted: Piece {}
 
 /// A piece that can be promoted from (Pawn)
 pub trait CurrentPosition {

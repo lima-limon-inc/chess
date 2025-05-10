@@ -1,7 +1,6 @@
 use crate::{
-    piece::{HorizontalRange, PlusRange, Promoted, VerticalRange},
-    Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
-    Recognizable,
+    piece::PlusRange, Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece,
+    PieceType, Position, Recognizable,
 };
 use std::collections::HashSet;
 
@@ -128,5 +127,3 @@ impl Piece for Rook {
         self.already_moved
     }
 }
-
-impl Promoted for Rook {}

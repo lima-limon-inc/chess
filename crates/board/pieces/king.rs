@@ -1,5 +1,5 @@
 use crate::{
-    piece::{HorizontalRange, PlusRange, StarRange, VerticalRange},
+    piece::{PlusRange, StarRange},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
     Recognizable,
 };

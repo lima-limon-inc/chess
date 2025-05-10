@@ -1,6 +1,6 @@
 use crate::piece::{
     ChoiceOfPromotablePiece, Color, DiagonalRange, HorizontalRange, Move, Piece, PieceType,
-    PlusRange, Position, Promotable, StarRange, VerticalRange, XAxis, YAxis,
+    Position, VerticalRange, XAxis, YAxis,
 };
 use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
 use crate::Effect;
@@ -12,6 +12,7 @@ pub struct Board {
 }
 
 impl Board {
+    #[allow(dead_code)]
     /// Only intended for testing
     fn new(pieces: Vec<Box<dyn Piece>>) -> Self {
         let dimensions = (XAxis::new(7), YAxis::new(7));
@@ -29,16 +30,16 @@ impl Board {
             y: YAxis::new(0i8),
         });
         let br = BottomRight(Position {
-            x: self.dimensions.0.clone(),
+            x: self.dimensions.0,
             y: YAxis::new(0i8),
         });
         let ul = UpperLeft(Position {
             x: XAxis::new(0i8),
-            y: self.dimensions.1.clone(),
+            y: self.dimensions.1,
         });
         let ur = UpperRight(Position {
-            x: self.dimensions.0.clone(),
-            y: self.dimensions.1.clone(),
+            x: self.dimensions.0,
+            y: self.dimensions.1,
         });
 
         debug_assert!(ur.0.y == ul.0.y);
@@ -50,7 +51,7 @@ impl Board {
     }
 
     pub fn is_inside(&self, pos: &Position) -> bool {
-        let (bl, br, ul, ur) = self.get_limits();
+        let (bl, br, ul, _) = self.get_limits();
 
         let within_x = bl.0.x <= pos.x && pos.x <= br.0.x;
         let within_y = bl.0.y <= pos.y && pos.y <= ul.0.y;
@@ -59,7 +60,7 @@ impl Board {
     }
 
     pub fn horizontal_range(&self, origin: Position, limit: Option<u8>) -> HorizontalRange {
-        let (bl, br, ul, ur) = self.get_limits();
+        let (_, _, _, ur) = self.get_limits();
 
         let up: Vec<_> = { (origin.y.0..ur.0.y.0).collect() };
         let down: Vec<_> = { (ur.0.y.0..origin.y.0).rev().collect() };
@@ -105,8 +106,6 @@ impl Board {
     }
 
     pub fn diagonal_range(&self, origin: Position, limit: Option<u8>) -> DiagonalRange {
-        let (bl, br, ul, ur) = self.get_limits();
-
         // We do each diagonal line
         //         1\   /2
         //           \ /

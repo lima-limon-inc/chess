@@ -1,9 +1,4 @@
 use crate::{
-    piece::{
-        ChoiceOfPromotablePiece, HorizontalRange, PlusRange, Promotable, Promoted, StarRange,
-        VerticalRange,
-    },
-    pieces::{Bishop, Knight, Queen, Rook},
     Board, Color, Colored, CurrentPosition, Effect, Move, Moveset, Piece, PieceType, Position,
     Recognizable, XAxis, YAxis,
 };
@@ -67,7 +62,7 @@ impl Moveset for Pawn {
             .map(|piece| piece.get_position())
             .collect();
 
-        let (bl, br, ul, ur) = board.get_limits();
+        let (bl, _, ul, _) = board.get_limits();
         let possible_move_positions = possible_move_positions
             .into_iter()
             .filter(|position| !occupied_positions.contains(position))
@@ -112,26 +107,18 @@ impl Moveset for Pawn {
 }
 
 impl Piece for Pawn {
-    // fn execute_move(&mut self, mov: Move) {
-    //     todo!();
-    //     todo!();
-    //     match mov.effect {
-    //         Some(Effect::Promotion(promotee)) => {
-    //             let result = self.from(promotee.unwrap());
-    //             self = result
-    //         }
-    //         _ => todo!(),
-    //     }
-    // }
-}
-
-impl Promotable for Pawn {
-    fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted> {
-        match choice {
-            ChoiceOfPromotablePiece::Bishop => Box::new(Bishop::new(self.color, self.position)),
-            ChoiceOfPromotablePiece::Knight => Box::new(Knight::new(self.color, self.position)),
-            ChoiceOfPromotablePiece::Queen => Box::new(Queen::new(self.color, self.position)),
-            ChoiceOfPromotablePiece::Rook => Box::new(Rook::new(self.color, self.position)),
-        }
+    fn was_moved(&self) -> bool {
+        self.already_moved
     }
 }
+
+// impl Promotable for Pawn {
+//     fn from(self, choice: ChoiceOfPromotablePiece) -> Box<dyn Promoted> {
+//         match choice {
+//             ChoiceOfPromotablePiece::Bishop => Box::new(Bishop::new(self.color, self.position)),
+//             ChoiceOfPromotablePiece::Knight => Box::new(Knight::new(self.color, self.position)),
+//             ChoiceOfPromotablePiece::Queen => Box::new(Queen::new(self.color, self.position)),
+//             ChoiceOfPromotablePiece::Rook => Box::new(Rook::new(self.color, self.position)),
+//         }
+//     }
+// }
