@@ -50,11 +50,16 @@ impl Moveset for Rook {
                 return Vec::new();
             }
 
-            //TODO: Check if there are no kings
-            let king = board
+            //TODO: Tidy this up
+            let king: Vec<_> = board
                 .find_pieces(Some(PieceType::King), Some(self.color))
-                .nth(0)
-                .expect("More than one king in the board");
+                .collect();
+            if king.len() == 0 {
+                return Vec::new();
+            } else if king.len() > 1 {
+                panic!("More than one king in the board");
+            };
+            let king = king.into_iter().nth(0).unwrap();
 
             if king.was_moved() == true {
                 return Vec::new();
