@@ -662,4 +662,33 @@ mod tests {
             assert!(destination.y.0 >= 0);
         }
     }
+
+    #[test]
+    fn check_movements_covered_by_friendly_piece_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            Box::new(Queen::new(
+                Color::White,
+                Position::new(XAxis::new(0), YAxis::new(0)),
+            )),
+            Box::new(Knight::new(
+                Color::White,
+                Position::new(XAxis::new(1), YAxis::new(0)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(0), YAxis::new(1)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(1), YAxis::new(1)),
+            )),
+        ];
+        let mut board = Board::new(pieces);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(0i8.into(), 0i8.into()))
+            .unwrap();
+
+        assert_eq!(moves.len(), 0);
+    }
 }

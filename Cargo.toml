@@ -12,3 +12,6 @@ members  = [
     "crates/board",
     "crates/gui"
 ]
+
+# TODO: Check integrity function
+# No pieces in the same square
