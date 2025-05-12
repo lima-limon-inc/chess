@@ -24,30 +24,30 @@ impl GuiBoard {
         let mut images = BTreeMap::new();
 
         //TODO use an iterator and fold to make this cleaner. Maybe?
-        let b_B = rl.load_texture(&thread, "images/bB.png").unwrap();
-        images.insert((PieceType::Bishop, PieceColor::Black), b_B);
-        let b_K = rl.load_texture(&thread, "images/bK.png").unwrap();
-        images.insert((PieceType::King, PieceColor::Black), b_K);
-        let b_N = rl.load_texture(&thread, "images/bN.png").unwrap();
-        images.insert((PieceType::Knight, PieceColor::Black), b_N);
-        let b_P = rl.load_texture(&thread, "images/bP.png").unwrap();
-        images.insert((PieceType::Pawn, PieceColor::Black), b_P);
-        let b_Q = rl.load_texture(&thread, "images/bQ.png").unwrap();
-        images.insert((PieceType::Queen, PieceColor::Black), b_Q);
-        let b_R = rl.load_texture(&thread, "images/bR.png").unwrap();
-        images.insert((PieceType::Rook, PieceColor::Black), b_R);
-        let w_B = rl.load_texture(&thread, "images/wB.png").unwrap();
-        images.insert((PieceType::Bishop, PieceColor::White), w_B);
-        let w_K = rl.load_texture(&thread, "images/wK.png").unwrap();
-        images.insert((PieceType::King, PieceColor::White), w_K);
-        let w_N = rl.load_texture(&thread, "images/wN.png").unwrap();
-        images.insert((PieceType::Knight, PieceColor::White), w_N);
-        let w_P = rl.load_texture(&thread, "images/wP.png").unwrap();
-        images.insert((PieceType::Pawn, PieceColor::White), w_P);
-        let w_Q = rl.load_texture(&thread, "images/wQ.png").unwrap();
-        images.insert((PieceType::Queen, PieceColor::White), w_Q);
-        let w_R = rl.load_texture(&thread, "images/wR.png").unwrap();
-        images.insert((PieceType::Rook, PieceColor::White), w_R);
+        let b_b = rl.load_texture(&thread, "images/bB.png").unwrap();
+        images.insert((PieceType::Bishop, PieceColor::Black), b_b);
+        let b_k = rl.load_texture(&thread, "images/bK.png").unwrap();
+        images.insert((PieceType::King, PieceColor::Black), b_k);
+        let b_n = rl.load_texture(&thread, "images/bN.png").unwrap();
+        images.insert((PieceType::Knight, PieceColor::Black), b_n);
+        let b_p = rl.load_texture(&thread, "images/bP.png").unwrap();
+        images.insert((PieceType::Pawn, PieceColor::Black), b_p);
+        let b_q = rl.load_texture(&thread, "images/bQ.png").unwrap();
+        images.insert((PieceType::Queen, PieceColor::Black), b_q);
+        let b_r = rl.load_texture(&thread, "images/bR.png").unwrap();
+        images.insert((PieceType::Rook, PieceColor::Black), b_r);
+        let w_b = rl.load_texture(&thread, "images/wB.png").unwrap();
+        images.insert((PieceType::Bishop, PieceColor::White), w_b);
+        let w_k = rl.load_texture(&thread, "images/wK.png").unwrap();
+        images.insert((PieceType::King, PieceColor::White), w_k);
+        let w_n = rl.load_texture(&thread, "images/wN.png").unwrap();
+        images.insert((PieceType::Knight, PieceColor::White), w_n);
+        let w_p = rl.load_texture(&thread, "images/wP.png").unwrap();
+        images.insert((PieceType::Pawn, PieceColor::White), w_p);
+        let w_q = rl.load_texture(&thread, "images/wQ.png").unwrap();
+        images.insert((PieceType::Queen, PieceColor::White), w_q);
+        let w_r = rl.load_texture(&thread, "images/wR.png").unwrap();
+        images.insert((PieceType::Rook, PieceColor::White), w_r);
 
         GuiBoard {
             board,
