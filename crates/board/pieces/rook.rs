@@ -45,9 +45,9 @@ impl Moveset for Rook {
             .map(|piece| piece.get_position())
             .collect();
 
-        let castling = {
+        let castling = 'castle: {
             if self.already_moved == true {
-                return Vec::new();
+                break 'castle Vec::new();
             }
 
             //TODO: Tidy this up
@@ -55,14 +55,14 @@ impl Moveset for Rook {
                 .find_pieces(Some(PieceType::King), Some(self.color))
                 .collect();
             if king.len() == 0 {
-                return Vec::new();
+                break 'castle Vec::new();
             } else if king.len() > 1 {
                 panic!("More than one king in the board");
             };
             let king = king.into_iter().nth(0).unwrap();
 
             if king.was_moved() == true {
-                return Vec::new();
+                break 'castle Vec::new();
             }
             let distance = king.get_position().sub_x(self.get_position().x);
             let normalized_distance = distance.x.0.abs();
