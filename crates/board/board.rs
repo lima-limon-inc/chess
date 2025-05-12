@@ -14,6 +14,7 @@ pub struct Board {
 impl Board {
     #[allow(dead_code)]
     /// Only intended for testing
+    /// TODO: Add a "fromstr" new where you draw the board with a string
     fn new(pieces: Vec<Box<dyn Piece>>) -> Self {
         let dimensions = (XAxis::new(7), YAxis::new(7));
 
@@ -682,6 +683,26 @@ mod tests {
                 Color::White,
                 Position::new(XAxis::new(1), YAxis::new(1)),
             )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(1)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(4), YAxis::new(3)),
+            )),
+            Box::new(Rook::new(
+                Color::Black,
+                Position::new(XAxis::new(4), YAxis::new(2)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(3), YAxis::new(2)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(5), YAxis::new(2)),
+            )),
         ];
         let mut board = Board::new(pieces);
 
@@ -689,6 +710,14 @@ mod tests {
             .get_moves_from(Position::new(0i8.into(), 0i8.into()))
             .unwrap();
 
+        // The queen is blocked by its own pieces and can't move
         assert_eq!(moves.len(), 0);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(4i8.into(), 2i8.into()))
+            .unwrap();
+
+        // The rook can only move in places where pawns are available
+        assert_eq!(moves.len(), 4);
     }
 }
