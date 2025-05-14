@@ -6,6 +6,7 @@ use crate::pieces::{Bishop, King, Knight, Pawn, Queen, Rook};
 use crate::Effect;
 use crate::{BottomLeft, BottomRight, UpperLeft, UpperRight};
 
+use std::collections::HashSet;
 pub struct Board {
     pieces: Vec<Box<dyn Piece>>,
     dimensions: (XAxis, YAxis),
@@ -60,59 +61,188 @@ impl Board {
         within_x && within_y
     }
 
-    pub fn horizontal_range(&self, origin: Position, limit: Option<u8>) -> HorizontalRange {
+    pub fn horizontal_range(
+        &self,
+        origin: Position,
+        limit: Option<u8>,
+        friendly: Color,
+    ) -> HorizontalRange {
+        let (teammates, opponents): (Vec<_>, Vec<_>) = self
+            .get_pieces()
+            .partition(|piece| piece.get_color() == friendly);
+        let teammates: HashSet<_> = teammates
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+        let opponents: HashSet<_> = opponents
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+
         let (_, _, _, ur) = self.get_limits();
 
-        let up: Vec<_> = { (origin.y.0..ur.0.y.0).collect() };
-        let down: Vec<_> = { (ur.0.y.0..origin.y.0).rev().collect() };
+        let up: Vec<_> = {
+            let mut left = Vec::new();
+            let mut current = origin;
+            loop {
+                current.y += 1.into();
 
-        let (up, down): (Vec<_>, Vec<_>) = if let Some(limit) = limit {
-            (
-                up.into_iter().take(limit.into()).collect(),
-                down.into_iter().take(limit.into()).collect(),
-            )
-        } else {
-            (up.into_iter().collect(), down.into_iter().collect())
+                if let Some(limit) = limit {
+                    if left.len() >= limit.into() {
+                        break;
+                    }
+                };
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    left.push(current);
+                    break;
+                }
+
+                left.push(current);
+            }
+            left
         };
 
-        HorizontalRange(
-            up.into_iter()
-                .chain(down)
-                .map(|y_axis| Position::new(origin.x, YAxis::new(y_axis)))
-                .collect(),
-        )
+        let down: Vec<_> = {
+            let mut left = Vec::new();
+            let mut current = origin;
+            loop {
+                current.y -= 1.into();
+
+                if let Some(limit) = limit {
+                    if left.len() >= limit.into() {
+                        break;
+                    }
+                };
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    left.push(current);
+                    break;
+                }
+
+                left.push(current);
+            }
+            left
+        };
+
+        HorizontalRange(up.into_iter().chain(down).collect())
     }
 
-    pub fn vertical_range(&self, origin: Position, limit: Option<u8>) -> VerticalRange {
+    pub fn vertical_range(
+        &self,
+        origin: Position,
+        limit: Option<u8>,
+        friendly: Color,
+    ) -> VerticalRange {
+        let (teammates, opponents): (Vec<_>, Vec<_>) = self
+            .get_pieces()
+            .partition(|piece| piece.get_color() == friendly);
+        let teammates: HashSet<_> = teammates
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+        let opponents: HashSet<_> = opponents
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+
         let (bl, br, _, _) = self.get_limits();
 
-        let left: Vec<_> = { (bl.0.x.0..origin.x.0).rev().collect() };
-        let right: Vec<_> = { (origin.x.0..br.0.x.0).collect() };
+        let left: Vec<_> = {
+            let mut left = Vec::new();
+            let mut current = origin;
+            loop {
+                current.x -= 1.into();
 
-        let (left, right): (Vec<_>, Vec<_>) = if let Some(limit) = limit {
-            (
-                left.into_iter().take(limit.into()).collect(),
-                right.into_iter().take(limit.into()).collect(),
-            )
-        } else {
-            (left.into_iter().collect(), right.into_iter().collect())
+                if let Some(limit) = limit {
+                    if left.len() >= limit.into() {
+                        break;
+                    }
+                };
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    left.push(current);
+                    break;
+                }
+
+                left.push(current);
+            }
+            left
         };
 
-        VerticalRange(
-            left.into_iter()
-                .chain(right)
-                .map(|x_axis| Position::new(XAxis::new(x_axis), origin.y))
-                .collect(),
-        )
+        let right: Vec<_> = {
+            let mut left = Vec::new();
+            let mut current = origin;
+            loop {
+                current.x += 1.into();
+
+                if let Some(limit) = limit {
+                    if left.len() >= limit.into() {
+                        break;
+                    }
+                };
+
+                if self.is_inside(&current) == false {
+                    break;
+                };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    left.push(current);
+                    break;
+                }
+
+                left.push(current);
+            }
+            left
+        };
+
+        VerticalRange(left.into_iter().chain(right).collect())
     }
 
-    pub fn diagonal_range(&self, origin: Position, limit: Option<u8>) -> DiagonalRange {
+    pub fn diagonal_range(
+        &self,
+        origin: Position,
+        limit: Option<u8>,
+        friendly: Color,
+    ) -> DiagonalRange {
         // We do each diagonal line
         //         1\   /2
         //           \ /
         //            o
         //           / \
         //         3/   \4
+        let (teammates, opponents): (Vec<_>, Vec<_>) = self
+            .get_pieces()
+            .partition(|piece| piece.get_color() == friendly);
+        let teammates: HashSet<_> = teammates
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+        let opponents: HashSet<_> = opponents
+            .into_iter()
+            .map(|piece| piece.get_position())
+            .collect();
+
         let diagonals = Vec::new();
 
         let center_to_ul = {
@@ -132,6 +262,13 @@ impl Board {
                 if self.is_inside(&current) == false {
                     break;
                 };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    upper_left.push(current);
+                    break;
+                }
 
                 upper_left.push(current);
             }
@@ -156,6 +293,13 @@ impl Board {
                     break;
                 };
 
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    upper_right.push(current);
+                    break;
+                }
+
                 upper_right.push(current);
             }
             upper_right
@@ -178,6 +322,13 @@ impl Board {
                     break;
                 };
 
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    bottom_left.push(current);
+                    break;
+                }
+
                 bottom_left.push(current);
             }
             bottom_left
@@ -199,6 +350,13 @@ impl Board {
                 if self.is_inside(&current) == false {
                     break;
                 };
+
+                if teammates.contains(&current) {
+                    break;
+                } else if opponents.contains(&current) {
+                    bottom_right.push(current);
+                    break;
+                }
 
                 bottom_right.push(current);
             }
@@ -703,6 +861,26 @@ mod tests {
                 Color::White,
                 Position::new(XAxis::new(5), YAxis::new(2)),
             )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(7), YAxis::new(6)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(5), YAxis::new(6)),
+            )),
+            Box::new(Bishop::new(
+                Color::Black,
+                Position::new(XAxis::new(6), YAxis::new(5)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(7), YAxis::new(4)),
+            )),
+            Box::new(Pawn::new(
+                Color::White,
+                Position::new(XAxis::new(5), YAxis::new(4)),
+            )),
         ];
         let mut board = Board::new(pieces);
 
@@ -715,6 +893,13 @@ mod tests {
 
         let moves: Vec<_> = board
             .get_moves_from(Position::new(4i8.into(), 2i8.into()))
+            .unwrap();
+
+        // The rook can only move in places where pawns are available
+        assert_eq!(moves.len(), 4);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(6i8.into(), 5i8.into()))
             .unwrap();
 
         // The rook can only move in places where pawns are available
