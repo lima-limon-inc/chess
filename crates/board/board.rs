@@ -905,4 +905,53 @@ mod tests {
         // The rook can only move in places where pawns are available
         assert_eq!(moves.len(), 4);
     }
+
+    #[test]
+    fn check_castling_covered_by_pieces_test() {
+        #[rustfmt::skip]
+        let pieces: Vec<Box<dyn Piece>> = vec![
+            // White pieces
+            // Pawns
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(6)))),
+            Box::new(Pawn::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(6)))),
+            // Pawns
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(0), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(1), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(2), YAxis::new(7)))),
+            Box::new(Queen::new(Color::Black, Position::new(XAxis::new(3), YAxis::new(7)))),
+            Box::new(King::new(Color::Black, Position::new(XAxis::new(4), YAxis::new(7)))),
+            Box::new(Bishop::new(Color::Black, Position::new(XAxis::new(5), YAxis::new(7)))),
+            Box::new(Knight::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(7)))),
+            Box::new(Rook::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(7)))),
+        ];
+
+        let mut board = Board::new(pieces);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(4i8.into(), 7i8.into()))
+            .unwrap();
+
+        // The king can't castle when the positions are covered by other pieces
+        assert_eq!(moves.len(), 0);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(0i8.into(), 7i8.into()))
+            .unwrap();
+
+        // The left rook can't either
+        assert_eq!(moves.len(), 0);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(7i8.into(), 7i8.into()))
+            .unwrap();
+
+        // The right rook can't either
+        assert_eq!(moves.len(), 0);
+    }
 }

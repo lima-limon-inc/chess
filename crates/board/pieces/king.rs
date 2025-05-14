@@ -82,6 +82,20 @@ impl Moveset for King {
                 .find_pieces(Some(PieceType::Rook), Some(self.color))
                 // Only get rooks that haven't been moved
                 .filter(|rook| rook.was_moved() == false)
+                .filter(|rook| {
+                    let distance = self.get_position().sub_x(rook.get_position().x);
+
+                    let mut range = {
+                        if self.get_position().x < rook.get_position().x {
+                            self.get_position().x.0 + 1..(rook.get_position().x.0 + 1)
+                        } else {
+                            rook.get_position().x.0..self.get_position().x.0
+                        }
+                    }
+                    .map(|x| Position::new(x.into(), self.get_position().y));
+
+                    !range.any(|pos| teammates.contains(&pos) || opponents.contains(&pos))
+                })
                 .map(|rook| {
                     let distance = self.get_position().sub_x(rook.get_position().x);
                     let normalized_distance = distance.x.0.abs();
