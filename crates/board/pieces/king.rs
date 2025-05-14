@@ -83,8 +83,6 @@ impl Moveset for King {
                 // Only get rooks that haven't been moved
                 .filter(|rook| rook.was_moved() == false)
                 .filter(|rook| {
-                    let distance = self.get_position().sub_x(rook.get_position().x);
-
                     let mut range = {
                         if self.get_position().x < rook.get_position().x {
                             self.get_position().x.0 + 1..(rook.get_position().x.0 + 1)

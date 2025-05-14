@@ -65,8 +65,24 @@ impl Moveset for Rook {
                 break 'castle Vec::new();
             }
             let distance = king.get_position().sub_x(self.get_position().x);
+
             let normalized_distance = distance.x.0.abs();
             let direction: i8 = distance.x.0 / normalized_distance;
+
+            //TODO: Clean this shit up
+            // Checks if there are pieces in between the rook and the king
+            {
+                let mut temp;
+                temp = self.get_position();
+                loop {
+                    temp.x += direction.into();
+                    if teammates.contains(&temp) || opponents.contains(&temp) {
+                        break 'castle Vec::new();
+                    } else if temp == king.get_position() {
+                        break;
+                    }
+                }
+            };
 
             let king_position = self.get_position().add_x(distance.x);
 
