@@ -85,9 +85,9 @@ impl Moveset for King {
                 .filter(|rook| {
                     let mut range = {
                         if self.get_position().x < rook.get_position().x {
-                            self.get_position().x.0 + 1..(rook.get_position().x.0 + 1)
+                            self.get_position().x.0 + 1..rook.get_position().x.0
                         } else {
-                            rook.get_position().x.0..self.get_position().x.0
+                            rook.get_position().x.0 + 1..self.get_position().x.0
                         }
                     }
                     .map(|x| Position::new(x.into(), self.get_position().y));
