@@ -49,13 +49,19 @@ impl Moveset for Pawn {
 
     fn available_positions(&self, board: &Board) -> Vec<Move> {
         // Black Pawns move "up" in the negative y position
-        let move_up = if self.color == Color::Black {
-            self.position.sub_y(YAxis::new(1))
+        let direction = if self.color == Color::Black {
+            -1
         // White Pawns move "up" in the positive y position
         } else {
-            self.position.add_y(YAxis::new(1))
+            1
         };
-        let possible_move_positions = vec![move_up];
+
+        let move_up = self.position.add_y(YAxis::new(direction));
+        let mut possible_move_positions = vec![move_up];
+        if self.already_moved == false {
+            let initial_possibility = self.position.add_y(YAxis::new(direction * 2));
+            possible_move_positions.push(initial_possibility);
+        };
 
         let occupied_positions: HashSet<_> = board
             .get_pieces()

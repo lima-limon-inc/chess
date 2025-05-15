@@ -954,4 +954,18 @@ mod tests {
         // The right rook can't either
         assert_eq!(moves.len(), 0);
     }
+
+    #[test]
+    fn pawn_initial_2_positions_test() {
+        let pieces: Vec<Box<dyn Piece>> = vec![Box::new(Pawn::new(
+            Color::White,
+            Position::new(XAxis::new(0), YAxis::new(1)),
+        ))];
+        let mut board = Board::new(pieces);
+
+        let moves: Vec<_> = board
+            .get_moves_from(Position::new(0i8.into(), 1i8.into()))
+            .unwrap();
+        assert_eq!(moves.len(), 2);
+    }
 }
