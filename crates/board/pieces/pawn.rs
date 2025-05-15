@@ -44,6 +44,7 @@ impl Colored for Pawn {
 
 impl Moveset for Pawn {
     fn move_to(&mut self, destination: Position) {
+        self.already_moved = true;
         self.position = destination;
     }
 

@@ -23,6 +23,7 @@ impl Rook {
 
 impl Moveset for Rook {
     fn move_to(&mut self, destination: Position) {
+        self.already_moved = true;
         self.position = destination;
     }
 

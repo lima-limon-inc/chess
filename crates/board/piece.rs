@@ -24,7 +24,7 @@ pub enum PieceType {
     Rook,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum ChoiceOfPromotablePiece {
     Bishop,
     Knight,
@@ -177,7 +177,7 @@ impl Position {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Effect {
     /// Capture a piece in the board
     Capture,
@@ -193,7 +193,7 @@ pub enum Effect {
 }
 
 /// This represent a move done by a piece. This means
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Move {
     /// The place where the piece that will execute the move is standing on
     pub origin: Position,

@@ -45,6 +45,7 @@ impl Colored for King {
 
 impl Moveset for King {
     fn move_to(&mut self, destination: Position) {
+        self.already_moved = true;
         self.position = destination;
     }
 

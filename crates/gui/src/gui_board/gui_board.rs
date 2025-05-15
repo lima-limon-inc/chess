@@ -61,15 +61,24 @@ impl GuiBoard {
 
         while !self.rl.window_should_close() {
             let mut d = self.rl.begin_drawing(&self.thread);
+
             draw_tiles(&mut d);
+            if let Some(ref moves) = available_moves {
+                draw_moves(&mut d, moves);
+            }
             draw_pieces(&self.images, &mut d, &self.board);
 
             if let Some(position) = get_clicked_tile(&d) {
-                available_moves = self.board.get_moves_from(position);
-            }
+                if let Some(ref moves) = available_moves {
+                    let desired_move = moves.iter().find(|mov| mov.destination == position);
+                    if let Some(mov) = desired_move {
+                        self.board.execute_move(*mov);
+                    }
 
-            if let Some(ref moves) = available_moves {
-                draw_moves(&mut d, moves);
+                    available_moves = None;
+                } else {
+                    available_moves = self.board.get_moves_from(position);
+                }
             }
         }
     }
@@ -128,8 +137,9 @@ fn get_clicked_tile(b: &RaylibDrawHandle) -> Option<Position> {
     let x_tile = (mouse_position.x / 120.0).floor();
     let y_tile = (mouse_position.y / 120.0).floor();
 
+    // TODO: Make this a function from-gui to board
     let x_tile: i8 = x_tile as i8;
-    let y_tile: i8 = y_tile as i8;
+    let y_tile: i8 = 7 - y_tile as i8;
 
     Some(Position::new(x_tile.into(), y_tile.into()))
 }
@@ -148,6 +158,7 @@ fn draw_moves(rldraw: &mut RaylibDrawHandle, moves: &Vec<Move>) {
         let destination = mov.destination;
         let x: i32 = destination.x.0.into();
         let y: i32 = destination.y.0.into();
+        let y = 7 - y;
 
         rldraw.draw_rectangle(
             TILE_SIZE * x,
