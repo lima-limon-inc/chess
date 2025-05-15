@@ -73,9 +73,10 @@ impl GuiBoard {
                     let desired_move = moves.iter().find(|mov| mov.destination == position);
                     if let Some(mov) = desired_move {
                         self.board.execute_move(*mov);
-                    }
-
-                    available_moves = None;
+                        available_moves = None;
+                    } else {
+                        available_moves = self.board.get_moves_from(position);
+                    };
                 } else {
                     available_moves = self.board.get_moves_from(position);
                 }
