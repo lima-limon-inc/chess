@@ -3,7 +3,7 @@ use raylib::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
 
-use board::{Board, Color as PieceColor, Move, PieceType, Position};
+use board::{Board, Color as PieceColor, Effect, Move, PieceType, Position};
 
 const TILE_SIZE: i32 = 120;
 
@@ -161,12 +161,13 @@ fn draw_moves(rldraw: &mut RaylibDrawHandle, moves: &Vec<Move>) {
         let y: i32 = destination.y.0.into();
         let y = 7 - y;
 
-        rldraw.draw_rectangle(
-            TILE_SIZE * x,
-            TILE_SIZE * y,
-            TILE_SIZE,
-            TILE_SIZE,
-            Color::GREEN,
-        );
+        let color = match mov.effect {
+            None => Color::GREEN,
+            Some(Effect::Capture) => Color::RED,
+            Some(Effect::Castling { .. }) => Color::YELLOW,
+            Some(Effect::Promotion(_)) => Color::BLUE,
+        };
+
+        rldraw.draw_rectangle(TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE, color);
     }
 }
