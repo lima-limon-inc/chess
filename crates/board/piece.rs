@@ -1,5 +1,5 @@
 use crate::board::Board;
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Not, Sub, SubAssign};
 
 pub struct BottomLeft(pub Position);
 pub struct BottomRight(pub Position);
@@ -36,6 +36,16 @@ pub enum ChoiceOfPromotablePiece {
 pub enum Color {
     Black,
     White,
+}
+impl Not for Color {
+    type Output = Self;
+
+    fn not(self) -> Self::Output {
+        match self {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+        }
+    }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord, Hash, Debug)]

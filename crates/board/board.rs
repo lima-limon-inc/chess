@@ -10,6 +10,7 @@ use std::collections::HashSet;
 pub struct Board {
     pieces: Vec<Box<dyn Piece>>,
     dimensions: (XAxis, YAxis),
+    turn: Color,
 }
 
 impl Board {
@@ -19,7 +20,15 @@ impl Board {
     fn new(pieces: Vec<Box<dyn Piece>>) -> Self {
         let dimensions = (XAxis::new(7), YAxis::new(7));
 
-        Board { pieces, dimensions }
+        Board {
+            pieces,
+            dimensions,
+            turn: Color::White,
+        }
+    }
+
+    pub fn get_turn(&self) -> Color {
+        self.turn
     }
 
     pub fn get_pieces(&self) -> impl Iterator<Item = &Box<dyn Piece>> {
@@ -397,6 +406,12 @@ impl Board {
 
         let piece: &mut Box<dyn Piece> = self.pieces.get_mut(index).unwrap();
 
+        // TODO: Add error
+        let piece_color = piece.get_color();
+        if piece_color != self.turn {
+            panic!()
+        }
+
         piece.move_to(mov.destination);
 
         match mov.effect {
@@ -431,6 +446,8 @@ impl Board {
             }
             None => (),
         }
+
+        self.turn = !self.turn;
     }
     // TODO: Pub crate instead of pub
     pub fn capture_piece(&mut self, pos: Position) {
@@ -518,7 +535,11 @@ impl Default for Board {
             Box::new(Knight::new(Color::Black, Position::new(XAxis::new(6), YAxis::new(7)))),
             Box::new(Rook::new(Color::Black, Position::new(XAxis::new(7), YAxis::new(7)))),
         ];
-        Board { pieces, dimensions }
+        Board {
+            pieces,
+            dimensions,
+            turn: Color::White,
+        }
     }
 }
 
